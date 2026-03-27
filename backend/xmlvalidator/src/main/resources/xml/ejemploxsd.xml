@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<articulo>
+
+    <metadatos>
+        <titulo>Introducción a XML</titulo>
+        <autor>Fernando</autor>
+        <fecha>2026-03-16</fecha>
+        <resumen>Resumen de XML</resumen>
+    </metadatos>
+
+    <contenido>
+
+        <seccion>
+            <tituloSeccion>¿Qué es XML?</tituloSeccion>
+            <parrafo>
+                XML es un lenguaje de marcado utilizado para estructurar datos.
+            </parrafo>
+        </seccion>
+
+        <seccion>
+            <tituloSeccion>Ventajas</tituloSeccion>
+
+            <parrafo>
+                XML es extensible y legible.
+            </parrafo>
+
+            <lista>
+                <elementoLista>Extensible</elementoLista>
+                <elementoLista>Portable</elementoLista>
+                <elementoLista>Legible</elementoLista>
+            </lista>
+
+        </seccion>
+
+    </contenido>
+
+</articulo>

@@ -1,46 +1,22 @@
 package com.tfg.xmlvalidator.model;
 
+import java.util.List;
+
 public class ValidationResult {
 
-    private boolean dtdValid;
-    private boolean xsdValid;
-    private boolean htmlGenerated;
-    private String w3cResponse;
+    private boolean valid;
+    private List<XmlError> errors;
 
-    public boolean isDtdValid() {
-        return dtdValid;
+    public ValidationResult(boolean valid, List<XmlError> errors){
+        this.valid=valid;
+        this.errors=errors;
     }
 
-    public void setDtdValid(boolean dtdValid) {
-        this.dtdValid = dtdValid;
+    public boolean isValid(){
+        return valid;
     }
 
-    public boolean isXsdValid() {
-        return xsdValid;
-    }
-
-    public void setXsdValid(boolean xsdValid) {
-        this.xsdValid = xsdValid;
-    }
-
-    public boolean isHtmlGenerated() {
-        return htmlGenerated;
-    }
-
-    public void setHtmlGenerated(boolean htmlGenerated) {
-        this.htmlGenerated = htmlGenerated;
-    }
-
-    public String getW3cResponse() {
-        return w3cResponse;
-    }
-
-    public void setW3cResponse(String w3cResponse) {
-        this.w3cResponse = w3cResponse;
-    }
-
-    public String toString(){
-
-        return "";
+    public List<XmlError> getErrors(){
+        return errors;
     }
 }

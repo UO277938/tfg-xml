@@ -1,14 +1,19 @@
 package com.tfg.xmlvalidator.service;
 
+import com.tfg.xmlvalidator.model.ValidationResult;
+import com.tfg.xmlvalidator.model.XmlError;
+import com.tfg.xmlvalidator.model.XmlErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.util.List;
 
 public class DtdValidationService {
 
-    public boolean validateXML() {
+    public ValidationResult validateXML(String xmlContent) {
 
         try {
 
@@ -18,42 +23,33 @@ public class DtdValidationService {
 
             DocumentBuilder builder = factory.newDocumentBuilder();
 
+            XmlErrorHandler errorHandler = new XmlErrorHandler();
+            builder.setErrorHandler(errorHandler);
+
             builder.setEntityResolver((publicId, systemId) -> {
 
                 InputStream dtdStream = getClass()
                         .getClassLoader()
                         .getResourceAsStream("xml/articulo.dtd");
-
-                if (dtdStream == null) {
-                    throw new RuntimeException("No se encontró articulo.dtd");
-                }
-
                 return new org.xml.sax.InputSource(dtdStream);
             });
 
-            builder.setErrorHandler(new org.xml.sax.helpers.DefaultHandler() {
-                @Override
-                public void error(org.xml.sax.SAXParseException e) throws SAXException {
-                    throw e;
-                }
-            });
 
-            // Cargar el XML correctamente
-            InputStream xmlStream = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("xml/ejemplo.xml");
+            InputSource is= new InputSource(new java.io.StringReader(xmlContent));
 
-            if (xmlStream == null) {
-                throw new RuntimeException("No se encontró ejemplo.xml");
+            builder.parse(is);
+
+            boolean valid= false;
+            if(errorHandler.getErrors().size()==0){
+                valid=true;
             }
 
-            builder.parse(xmlStream);
-
-            return true;
+            return new ValidationResult(valid, errorHandler.getErrors());
 
         } catch (Exception e) {
-            System.out.println("Error de validación: " + e.getMessage());
-            return false;
+            return new ValidationResult(false, List.of(
+                    new XmlError(0,0,e.getMessage())
+            ));
         }
 
     }

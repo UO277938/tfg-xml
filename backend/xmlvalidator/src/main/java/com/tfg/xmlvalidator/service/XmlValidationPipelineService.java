@@ -5,8 +5,8 @@ import com.tfg.xmlvalidator.model.ValidationResult;
 public class XmlValidationPipelineService {
 
     public ValidationResult validateAll() {
-
-        String xml = "src/main/resources/xml/ejemplo.xml";
+        ValidationResult result = new ValidationResult(false, null);
+        /*String xml = "src/main/resources/xml/ejemplo.xml";
         String xsd = "src/main/resources/xml/articulo.xsd";
         String xslt = "src/main/resources/xml/transformacion.xslt";
         String html = "src/main/resources/xml/output.html";
@@ -39,7 +39,7 @@ public class XmlValidationPipelineService {
             result.setW3cResponse("HTML no generado por errores en XML");
 
         }
-
+*/
         return result;
     }
 }

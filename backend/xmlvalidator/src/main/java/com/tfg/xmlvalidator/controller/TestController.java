@@ -2,30 +2,41 @@ package com.tfg.xmlvalidator.controller;
 
 import com.tfg.xmlvalidator.model.ValidationResult;
 import com.tfg.xmlvalidator.service.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
-@CrossOrigin(origins = "*")
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:5173/")
 public class TestController {
 
-    @GetMapping("/validar-dtd")
-    public String validarDTD() {
+    @PostMapping("/validar-dtd")
+    public ResponseEntity<?> validarDTD(@RequestParam("file") MultipartFile file) {
 
-        DtdValidationService validator = new DtdValidationService();
+        try {
+            String xmlContent = new String(file.getBytes(), StandardCharsets.UTF_8);
+            DtdValidationService validator = new DtdValidationService();
 
-        boolean valido = validator.validateXML();
+            ValidationResult result = validator.validateXML(xmlContent);
 
-        if (valido) {
-            return "XML válido según DTD";
-        } else {
-            return "XML NO válido";
+            return ResponseEntity.ok(result);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(
+                    HttpStatus.INTERNAL_SERVER_ERROR).body(
+                            "Error leyendo el archivo");
         }
+
+
 
     }
 
-    @GetMapping("/validar-xsd")
+    @PostMapping("/validar-xsd")
     public String validarXSD() {
 
         XsdValidationService validator = new XsdValidationService();
@@ -40,7 +51,7 @@ public class TestController {
 
     }
 
-    @GetMapping("/generar-html")
+    @PostMapping("/generar-html")
     public String generarHTML() {
 
         XsltTransformationService service = new XsltTransformationService();
@@ -54,7 +65,7 @@ public class TestController {
         return "HTML generado correctamente";
     }
 
-    @GetMapping("/validar-w3c")
+    @PostMapping("/validar-w3c")
     public String validarHTMLW3C() {
 
         W3cValidationService validator = new W3cValidationService();
@@ -66,7 +77,7 @@ public class TestController {
         return result;
     }
 
-    @GetMapping("/validar-documento")
+    @PostMapping("/validar-documento")
     public ValidationResult validarDocumento() {
 
         XmlValidationPipelineService pipeline =

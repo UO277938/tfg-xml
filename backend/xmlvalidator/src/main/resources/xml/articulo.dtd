@@ -1,22 +1,22 @@
 <!ELEMENT articulo (metadatos, contenido)>
 
-        <!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
-        <!ELEMENT titulo (#PCDATA)>
-        <!ELEMENT autor (#PCDATA)>
-        <!ELEMENT fecha (#PCDATA)>
-        <!ELEMENT resumen (#PCDATA)>
+<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
+<!ELEMENT titulo (#PCDATA)>
+<!ELEMENT autor (#PCDATA)>
+<!ELEMENT fecha (#PCDATA)>
+<!ELEMENT resumen (#PCDATA)>
 
-        <!ELEMENT contenido (seccion+)>
+<!ELEMENT contenido (seccion+)>
 
-        <!ELEMENT seccion (tituloSeccion, parrafo+, lista?, imagen*)>
+<!ELEMENT seccion (tituloSeccion, parrafo+, lista?, imagen*)>
 
-        <!ELEMENT tituloSeccion (#PCDATA)>
-        <!ELEMENT parrafo (#PCDATA)>
+<!ELEMENT tituloSeccion (#PCDATA)>
+<!ELEMENT parrafo (#PCDATA)>
 
-        <!ELEMENT lista (elementoLista+)>
-        <!ELEMENT elementoLista (#PCDATA)>
+<!ELEMENT lista (elementoLista+)>
+<!ELEMENT elementoLista (#PCDATA)>
 
-        <!ELEMENT imagen EMPTY>
-        <!ATTLIST imagen
-                src CDATA #REQUIRED
-                alt CDATA #IMPLIED>
+<!ELEMENT imagen EMPTY>
+<!ATTLIST imagen
+        src CDATA #REQUIRED
+        alt CDATA #IMPLIED>

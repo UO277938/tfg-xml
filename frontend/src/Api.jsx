@@ -2,24 +2,14 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api";
 
-export const validateDtd = async (xml) => {
-  const blob = new Blob([xml], { type: "text/xml" });
+export const validateDtd = (xml) =>
+  axios.post(`${API_URL}/validar-dtd`, { xml })
+       .then(res => res.data);
 
-  const formData = new FormData();
-  formData.append("file", blob, "archivo.xml");
+export const validateXsd = (xml) =>
+  axios.post(`${API_URL}/validar-xsd`, { xml })
+       .then(res => res.data);
 
-  const res = await axios.post(`${API_URL}/validar-dtd`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
-  });
-  return res.data;
-};
-
-export const validateXsd = async (xml) => {
-  const res = await axios.post(`${API_URL}/validar-xsd`, { xml });
-  return res.data;
-};
 
 export const generateHtml = async (xml) => {
   const res = await axios.post(`${API_URL}/generar-html`, { xml });
@@ -27,6 +17,6 @@ export const generateHtml = async (xml) => {
 };
 
 export const validateW3C = async (xml) => {
-  const res = await axios.post(`${API_URL}/validar-w3c`, { xml });
+  const res = await axios.post(`${API_URL}/validar-w3c`, { html });
   return res.data;
 };

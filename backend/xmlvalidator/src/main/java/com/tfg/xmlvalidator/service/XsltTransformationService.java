@@ -1,34 +1,53 @@
 package com.tfg.xmlvalidator.service;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
+import com.tfg.xmlvalidator.model.ValidationResult;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
+
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 public class XsltTransformationService {
 
-    public void transformXML(String xmlPath, String xsltPath, String outputPath) {
-
+    public String transformXML(String xmlContent) {
         try {
+
+            InputStream xsltStream = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("xml/transformacion.xslt");
+
+            if (xsltStream == null) {
+                throw new RuntimeException("No se encontró transformacion.xslt");
+            }
+
+            xmlContent = xmlContent.replaceAll("<!DOCTYPE[^>]*>", "");
 
             TransformerFactory factory = TransformerFactory.newInstance();
 
-            Source xslt = new StreamSource(new File(xsltPath));
-            Transformer transformer = factory.newTransformer(xslt);
+            Transformer transformer = factory.newTransformer(
+                    new StreamSource(xsltStream)
+            );
 
-            Source xml = new StreamSource(new File(xmlPath));
+            StreamSource xmlSource =
+                    new StreamSource(new StringReader(xmlContent));
 
-            Result output = new StreamResult(new File(outputPath));
+            StringWriter writer = new StringWriter();
 
-            transformer.transform(xml, output);
+            transformer.transform(
+                    xmlSource,
+                    new StreamResult(writer)
+            );
 
-            System.out.println("HTML generado correctamente");
+            return writer.toString();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(
+                    "Error transformando XML a HTML: " + e.getMessage()
+            );
         }
 
     }

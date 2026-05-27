@@ -1,7 +1,9 @@
 package com.tfg.xmlvalidator.controller;
 
 import com.tfg.xmlvalidator.model.ValidationResult;
+import com.tfg.xmlvalidator.model.XmlRequest;
 import com.tfg.xmlvalidator.service.*;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -16,65 +19,39 @@ import java.nio.charset.StandardCharsets;
 public class TestController {
 
     @PostMapping("/validar-dtd")
-    public ResponseEntity<?> validarDTD(@RequestParam("file") MultipartFile file) {
-
-        try {
-            String xmlContent = new String(file.getBytes(), StandardCharsets.UTF_8);
-            DtdValidationService validator = new DtdValidationService();
-
-            ValidationResult result = validator.validateXML(xmlContent);
-
-            return ResponseEntity.ok(result);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(
-                    HttpStatus.INTERNAL_SERVER_ERROR).body(
-                            "Error leyendo el archivo");
-        }
-
-
-
+    public ResponseEntity<ValidationResult> validarDTD(@RequestBody XmlRequest request) {
+        DtdValidationService validator = new DtdValidationService();
+        ValidationResult result = validator.validateXML(request.getXml());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/validar-xsd")
-    public String validarXSD() {
+    public ResponseEntity<ValidationResult> validarXSD(@RequestBody XmlRequest request) {
 
         XsdValidationService validator = new XsdValidationService();
-
-        boolean valido = validator.validateXML();
-
-        if (valido) {
-            return "XML válido según XSD";
-        } else {
-            return "XML NO válido según XSD";
-        }
-
+        ValidationResult result = validator.validateXML(request.getXml());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/generar-html")
-    public String generarHTML() {
+    public ResponseEntity<String> generarHTML(@RequestBody XmlRequest request) {
 
         XsltTransformationService service = new XsltTransformationService();
-
-        service.transformXML(
-                "src/main/resources/xml/ejemplo.xml",
-                "src/main/resources/xml/transformacion.xslt",
-                "src/main/resources/xml/output.html"
-        );
-
-        return "HTML generado correctamente";
+        String html = service.transformXML(request.getXml());
+        return ResponseEntity.ok(html);
     }
 
     @PostMapping("/validar-w3c")
-    public String validarHTMLW3C() {
+    public ResponseEntity<ValidationResult> validarHTMLW3C(@RequestBody XmlRequest request) {
+
+        XsltTransformationService xsltService = new XsltTransformationService();
+        String html = xsltService.transformXML(request.getXml());
 
         W3cValidationService validator = new W3cValidationService();
 
-        String result = validator.validateHTML(
-                "src/main/resources/xml/output.html"
-        );
+        ValidationResult result = validator.validateHTML(html);
 
-        return result;
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/validar-documento")

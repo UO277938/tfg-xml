@@ -1,58 +1,95 @@
 package com.tfg.xmlvalidator.service;
 
+import com.tfg.xmlvalidator.model.ValidationResult;
+import com.tfg.xmlvalidator.model.XmlError;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class W3cValidationService {
 
-    public String validateHTML(String htmlPath) {
+    public ValidationResult validateHTML(String htmlContent) {
 
         try {
 
-            File htmlFile = new File(htmlPath);
+            RestTemplate restTemplate = new RestTemplate();
 
-            URL url = new URL("https://validator.w3.org/nu/?out=json");
+            HttpHeaders headers = new HttpHeaders();
 
-            HttpURLConnection connection =
-                    (HttpURLConnection) url.openConnection();
+            headers.setContentType(MediaType.TEXT_HTML);
 
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "text/html; charset=utf-8");
-            connection.setDoOutput(true);
+            headers.set("User-Agent", "XMLValidatorTFG");
+            headers.set("Accept", "application/json");
 
-            OutputStream os = connection.getOutputStream();
+            HttpEntity<String> entity =
+                    new HttpEntity<>(htmlContent, headers);
 
-            FileInputStream fis = new FileInputStream(htmlFile);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://validator.w3.org/nu/?out=json",
+                    HttpMethod.POST,
+                    entity,
+                    String.class
+            );
 
-            byte[] buffer = new byte[1024];
-            int bytesRead;
+            String body = response.getBody();
 
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                os.write(buffer, 0, bytesRead);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(body);
+
+            List<XmlError> errors = new ArrayList<>();
+
+            JsonNode messages = root.get("messages");
+
+            if (messages != null) {
+
+                for (JsonNode msg : messages) {
+
+                    String type = msg.has("type")
+                            ? msg.get("type").asText()
+                            : "unknown";
+
+                    // solo errores
+                    if ("error".equals(type)) {
+
+                        int line = msg.has("lastLine")
+                                ? msg.get("lastLine").asInt()
+                                : 0;
+
+                        int col = msg.has("firstColumn")
+                                ? msg.get("firstColumn").asInt()
+                                : 0;
+
+                        String message = msg.has("message")
+                                ? msg.get("message").asText()
+                                : "Error desconocido";
+
+                        errors.add(new XmlError(line, col, message));
+                    }
+                }
             }
 
-            fis.close();
-            os.close();
-
-            BufferedReader reader =
-                    new BufferedReader(
-                            new InputStreamReader(connection.getInputStream())
-                    );
-
-            String line;
-            StringBuilder response = new StringBuilder();
-
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-
-            reader.close();
-
-            return response.toString();
+            return new ValidationResult(
+                    errors.isEmpty(),
+                    errors
+            );
 
         } catch (Exception e) {
-            return "Error validando HTML: " + e.getMessage();
+
+            return new ValidationResult(
+                    false,
+                    List.of(new XmlError(
+                            0,
+                            0,
+                            "Error validando con W3C: " + e.getMessage()
+                    ))
+            );
         }
 
     }

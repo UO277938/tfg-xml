@@ -4,7 +4,6 @@ import com.tfg.xmlvalidator.model.ValidationResult;
 import com.tfg.xmlvalidator.model.XmlError;
 import com.tfg.xmlvalidator.model.XmlErrorHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,12 +38,9 @@ public class DtdValidationService {
 
             builder.parse(is);
 
-            boolean valid= false;
-            if(errorHandler.getErrors().size()==0){
-                valid=true;
-            }
-
-            return new ValidationResult(valid, errorHandler.getErrors());
+            return new ValidationResult(
+                    errorHandler.getErrors().isEmpty(),
+                    errorHandler.getErrors());
 
         } catch (Exception e) {
             return new ValidationResult(false, List.of(

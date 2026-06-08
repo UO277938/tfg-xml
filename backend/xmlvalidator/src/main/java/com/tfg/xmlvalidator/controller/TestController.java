@@ -3,15 +3,8 @@ package com.tfg.xmlvalidator.controller;
 import com.tfg.xmlvalidator.model.ValidationResult;
 import com.tfg.xmlvalidator.model.XmlRequest;
 import com.tfg.xmlvalidator.service.*;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -34,24 +27,29 @@ public class TestController {
     }
 
     @PostMapping("/generar-html")
-    public ResponseEntity<String> generarHTML(@RequestBody XmlRequest request) {
+    public ResponseEntity<ValidationResult> generarHTML(@RequestBody XmlRequest request) {
 
         XsltTransformationService service = new XsltTransformationService();
-        String html = service.transformXML(request.getXml());
-        return ResponseEntity.ok(html);
+        ValidationResult result = service.transformXML(request.getXml());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/validar-w3c")
     public ResponseEntity<ValidationResult> validarHTMLW3C(@RequestBody XmlRequest request) {
-
+        System.out.println("ENTRA EN W3C");
         XsltTransformationService xsltService = new XsltTransformationService();
-        String html = xsltService.transformXML(request.getXml());
+        ValidationResult html = xsltService.transformXML(request.getXml());
+        if(html.isValid()) {
+            W3cValidationService validator = new W3cValidationService();
 
-        W3cValidationService validator = new W3cValidationService();
+            ValidationResult result = validator.validateHTML(html.getHtml());
+            System.out.println("SALE DE W3C");
 
-        ValidationResult result = validator.validateHTML(html);
-
-        return ResponseEntity.ok(result);
+            return ResponseEntity.ok(result);
+        }
+        else{
+            return ResponseEntity.ok(html);
+        }
     }
 
     @PostMapping("/validar-documento")

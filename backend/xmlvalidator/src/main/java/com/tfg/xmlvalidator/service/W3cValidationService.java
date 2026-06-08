@@ -8,14 +8,14 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class W3cValidationService {
 
     public ValidationResult validateHTML(String htmlContent) {
+
+
 
         try {
 
@@ -40,6 +40,9 @@ public class W3cValidationService {
 
             String body = response.getBody();
 
+            System.out.println("=== W3C RAW RESPONSE ===");
+            System.out.println(body);
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(body);
 
@@ -47,30 +50,18 @@ public class W3cValidationService {
 
             JsonNode messages = root.get("messages");
 
-            if (messages != null) {
-
+            if (messages.isArray()) {
                 for (JsonNode msg : messages) {
+                    System.out.println("ENTRA");
+                    String type = msg.path("type").asText("");
 
-                    String type = msg.has("type")
-                            ? msg.get("type").asText()
-                            : "unknown";
+                    if ("error".equals(type) || "info".equals(type)) {
 
-                    // solo errores
-                    if ("error".equals(type)) {
+                        int line = msg.path("lastLine").asInt(0);
+                        int col = msg.path("firstColumn").asInt(0);
+                        String message = msg.path("message").asText("Unknown W3C message");
 
-                        int line = msg.has("lastLine")
-                                ? msg.get("lastLine").asInt()
-                                : 0;
-
-                        int col = msg.has("firstColumn")
-                                ? msg.get("firstColumn").asInt()
-                                : 0;
-
-                        String message = msg.has("message")
-                                ? msg.get("message").asText()
-                                : "Error desconocido";
-
-                        errors.add(new XmlError(line, col, message));
+                        errors.add(new XmlError(line, col, "[" + type + "] " + message));
                     }
                 }
             }
@@ -84,10 +75,7 @@ public class W3cValidationService {
 
             return new ValidationResult(
                     false,
-                    List.of(new XmlError(
-                            0,
-                            0,
-                            "Error validando con W3C: " + e.getMessage()
+                    List.of(new XmlError(0, 0, "Error validando con W3C: " + e.getMessage()
                     ))
             );
         }

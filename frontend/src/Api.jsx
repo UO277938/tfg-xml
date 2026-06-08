@@ -13,10 +13,11 @@ export const validateXsd = (xml) =>
 
 export const generateHtml = async (xml) => {
   const res = await axios.post(`${API_URL}/generar-html`, { xml });
+
   return res.data;
 };
 
 export const validateW3C = async (xml) => {
-  const res = await axios.post(`${API_URL}/validar-w3c`, { html });
+  const res = await axios.post(`${API_URL}/validar-w3c`, { xml });
   return res.data;
 };

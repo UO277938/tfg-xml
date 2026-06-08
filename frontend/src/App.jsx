@@ -137,14 +137,18 @@ export default function App() {
   const [errors, setErrors] = useState([]);
   const [valid, setValid] = useState(null);
 
+  const [validText, setValidText] = useState("");
+
   const [html, setHtml] = useState(baseHtml);
 
   const handleValidateDtd = async () => {
     if(activeTab == "xml"){
       try {
         const res = await validateDtd(xml);
+        console.log(res);
         setErrors(res.errors);
         setValid(res.valid);
+        setValidText("XML CON DTD")
       } catch (e) {
         console.error(e);
       }
@@ -155,8 +159,10 @@ export default function App() {
     if(activeTab == "xml"){
       try {
         const res = await validateXsd(xml);
+        console.log(res);
         setErrors(res.errors);
         setValid(res.valid);
+        setValidText("XML CON XSD")
       } catch (e) {
         console.error(e);
       }
@@ -168,7 +174,14 @@ export default function App() {
       try {
         setActiveTab("html"); 
         const res = await generateHtml(xml);
-        setHtml(res);
+        console.log(res);
+        setValid(null);
+        setValidText("")
+        if(res.valid){
+          setHtml(res.html);
+          setErrors([])
+        }
+        
       } catch (e) {
         console.error(e);
       }
@@ -176,11 +189,14 @@ export default function App() {
   };
 
   const handleValidateW3C = async () => {
-    if(activeTab == "xml"){
+    if(activeTab == "html"){
+      
       try {
         const res = await validateW3C(xml);
+        console.log(res);
         setErrors(res.errors);
         setValid(res.valid);
+        setValidText("HTML CON W3C")
       } catch (e) {
         console.error(e);
       }
@@ -242,32 +258,37 @@ export default function App() {
       )}
 
       {activeTab === "dtd" && (
-        <XmlEditor value={dtd} onChange={xsd} />
-      )}
-      {activeTab === "xml" && (
-        <div>
-          <button onClick={handleValidateDtd}>Validar DTD</button>
-          <button onClick={handleValidateXsd}>Validar XSD</button>
-          <button onClick={handleGenerateHtml}>Generar HTML</button>
-          <button onClick={handleValidateW3C}>Validar W3C</button>
-        </div>
+        <XmlEditor value={dtd} onChange={dtd} />
       )}
 
       {activeTab === "html" && (
         <XmlEditor value={html} onChange={html} />
       )}
 
-      {valid !== null && activeTab!=="html" &&(
+      {activeTab === "xml" && (
+        <div>
+          <button onClick={handleValidateDtd}>Validar DTD</button>
+          <button onClick={handleValidateXsd}>Validar XSD</button>
+          <button onClick={handleGenerateHtml}>Generar HTML</button>
+        </div>
+      )}
+
+      {activeTab === "html" && (
+        <div>
+          <button onClick={handleValidateW3C}>Validar W3C</button>
+        </div>
+      )}
+
+      {valid !== null  &&(
           <div>
             {valid ? (
-              <p style={{ color: "green" }}>XML válido</p>
+              <p style={{ color: "green" }}>CORRECTO: {validText}</p>
             ) : (
-              <p style={{ color: "red" }}>XML no válido</p>
+              <p style={{ color: "red" }}>FALLO: {validText}</p>
             )}
           </div>
       )}
   
-      {activeTab!=="html" && (
         <ul>
           {errors.map((err, i) => (
             <li key={i}>
@@ -275,7 +296,6 @@ export default function App() {
             </li>
           ))}
         </ul>
-      )}
     </div>
   );
 }

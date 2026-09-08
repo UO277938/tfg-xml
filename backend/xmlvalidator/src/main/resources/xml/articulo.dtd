@@ -1,22 +1,113 @@
 <!ELEMENT articulo (metadatos, contenido)>
 
+<!-- METADATOS -->
 <!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
 <!ELEMENT titulo (#PCDATA)>
 <!ELEMENT autor (#PCDATA)>
 <!ELEMENT fecha (#PCDATA)>
 <!ELEMENT resumen (#PCDATA)>
 
-<!ELEMENT contenido (seccion+)>
+<!-- BODY -->
+<!ELEMENT contenido (header?, nav?, main, footer?)>
 
-<!ELEMENT seccion (tituloSeccion, parrafo+, lista?, imagen*)>
+<!ELEMENT seccion (titulo, elemento*)>
+<!ELEMENT header (titulo, elemento*)>
+<!ELEMENT footer (elemento*)>
+<!ELEMENT nav (elemento*)>
+<!ELEMENT main (elemento*)>
+<!ELEMENT article (titulo, elemento*)>
+<!ELEMENT aside (titulo?, elemento*)>
 
-<!ELEMENT tituloSeccion (#PCDATA)>
+<!ELEMENT elemento (
+        parrafo |
+        lista |
+        multimedia |
+        enlace |
+        cita |
+        codigo |
+        preformateado |
+        negrita |
+        cursiva |
+        subrayado |
+        tachado |
+        enfasis |
+        abreviatura |
+        textoPequeno |
+        tabla |
+        formulario |
+        seccion |
+        article |
+        aside |
+        nav |
+        header |
+        footer
+        )>
+
+<!-- TEXTO -->
 <!ELEMENT parrafo (#PCDATA)>
+<!ELEMENT negrita (#PCDATA)>
+<!ELEMENT cursiva (#PCDATA)>
+<!ELEMENT subrayado (#PCDATA)>
+<!ELEMENT tachado (#PCDATA)>
+<!ELEMENT enfasis (#PCDATA)>
+<!ELEMENT cita (#PCDATA)>
+<!ELEMENT codigo (#PCDATA)>
+<!ELEMENT preformateado (#PCDATA)>
+<!ELEMENT abreviatura (#PCDATA)>
+<!ELEMENT textoPequeno (#PCDATA)>
 
+<!-- LISTA -->
 <!ELEMENT lista (elementoLista+)>
+<!ATTLIST lista
+    tipo (ordenada | desordenada) "desordenada">
 <!ELEMENT elementoLista (#PCDATA)>
 
-<!ELEMENT imagen EMPTY>
-<!ATTLIST imagen
+<!-- TABLA -->
+<!ELEMENT tabla (leyenda?, cabecera?, cuerpoTabla)>
+
+<!ELEMENT leyenda (#PCDATA)>
+<!ELEMENT cabecera (fila+)>
+<!ELEMENT cuerpoTabla (fila+)>
+
+<!ELEMENT fila (celda+)>
+<!ELEMENT celda (#PCDATA)>
+
+<!-- FORMULARIO -->
+<!ELEMENT formulario (etiqueta | entrada | boton | areaTexto | seleccion)*>
+<!ATTLIST formulario
+        action CDATA #IMPLIED
+        method (get | post) "get">
+
+<!ELEMENT etiqueta (#PCDATA)>
+<!ATTLIST etiqueta
+        para CDATA #IMPLIED>
+
+<!ELEMENT entrada EMPTY>
+<!ATTLIST entrada
+        tipo CDATA #REQUIRED
+        nombre CDATA #IMPLIED
+        valor CDATA #IMPLIED
+        placeholder CDATA #IMPLIED
+        requerido (true | false) "false">
+
+<!ELEMENT boton (#PCDATA)>
+<!ELEMENT areaTexto (#PCDATA)>
+<!ELEMENT seleccion (opcion+)>
+<!ELEMENT opcion (#PCDATA)>
+<!ATTLIST opcion
+        valor CDATA #IMPLIED>
+
+<!-- MULTIMEDIA -->
+<!ELEMENT multimedia EMPTY>
+<!ATTLIST multimedia
+        tipo (imagen | video | audio) #REQUIRED
         src CDATA #REQUIRED
         alt CDATA #IMPLIED>
+
+<!-- MULTIMEDIA -->
+<!ELEMENT enlace (#PCDATA)>
+<!ATTLIST enlace
+    href CDATA #REQUIRED
+    target CDATA #IMPLIED>
+
+<!ELEMENT figura (multimedia, leyenda?)>

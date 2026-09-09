@@ -1,76 +1,110 @@
-<!ELEMENT articulo (metadatos, contenido)>
-
-<!-- METADATOS -->
-<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
-<!ELEMENT titulo (#PCDATA)>
-<!ELEMENT autor (#PCDATA)>
-<!ELEMENT fecha (#PCDATA)>
-<!ELEMENT resumen (#PCDATA)>
-
-<!-- BODY -->
-<!ELEMENT contenido (header?, nav?, main, footer?)>
-
-<!ELEMENT seccion (titulo, elemento*)>
-<!ELEMENT header (titulo, elemento*)>
-<!ELEMENT footer (elemento*)>
-<!ELEMENT nav (elemento*)>
-<!ELEMENT main (elemento*)>
-<!ELEMENT article (titulo, elemento*)>
-<!ELEMENT aside (titulo?, elemento*)>
-
-<!ELEMENT elemento (
-        parrafo |
+<!-- REUTILIZABLE -->
+<!ENTITY % contenidoElemento
+        "parrafo |
         lista |
+        listaDefiniciones |
+        tabla |
         multimedia |
-        enlace |
+        figura |
         cita |
-        codigo |
-        preformateado |
+        formulario |
+        seccion |
+        articulo |
+        aside |
+        contenedor |
+        detalles |
+        dialogo">
+
+<!ENTITY % contenidoTexto
+        "#PCDATA |
         negrita |
         cursiva |
         subrayado |
         tachado |
         enfasis |
+        marcado |
         abreviatura |
         textoPequeno |
-        tabla |
-        formulario |
-        seccion |
-        article |
-        aside |
-        nav |
-        header |
-        footer
-        )>
+        subindice |
+        superindice |
+        codigo |
+        enlace |
+        direccion |
+        tiempo |
+        saltoLinea">
+
+<!-- ESTRUCTURA -->
+<!ELEMENT documento (metadatos, cuerpo)>
+<!-- METADATOS -->
+<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
+<!ELEMENT titulo ((%contenidoTexto;)*)>
+<!ATTLIST titulo
+        nivel (h1 | h2 | h3 | h4 | h5 | h6) #REQUIRED>
+<!ELEMENT autor (#PCDATA)>
+<!ELEMENT fecha (#PCDATA)>
+<!ELEMENT resumen (#PCDATA)>
+
+<!-- SECCIONES -->
+<!ELEMENT cuerpo (header?, nav?, aside?, main, footer?)>
+
+<!ELEMENT articulo (titulo, (%contenidoElemento;)*)>
+<!ELEMENT seccion (titulo, (%contenidoElemento;)*)>
+<!ELEMENT nav ((%contenidoElemento;)*)>
+<!ELEMENT aside (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT header (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT footer ((%contenidoElemento;)*)>
+
+<!ELEMENT main ((%contenidoElemento;)*)>
+
+
+<!-- CONTENIDO -->
 
 <!-- TEXTO -->
-<!ELEMENT parrafo (#PCDATA)>
-<!ELEMENT negrita (#PCDATA)>
-<!ELEMENT cursiva (#PCDATA)>
-<!ELEMENT subrayado (#PCDATA)>
-<!ELEMENT tachado (#PCDATA)>
-<!ELEMENT enfasis (#PCDATA)>
-<!ELEMENT cita (#PCDATA)>
+<!ELEMENT parrafo ((%contenidoTexto;)*)>
+<!ELEMENT negrita ((%contenidoTexto;)*)>
+<!ELEMENT cursiva ((%contenidoTexto;)*)>
+<!ELEMENT subrayado ((%contenidoTexto;)*)>
+<!ELEMENT tachado ((%contenidoTexto;)*)>
+<!ELEMENT enfasis ((%contenidoTexto;)*)>
+<!ELEMENT abreviatura ((%contenidoTexto;)*)>
+<!ELEMENT textoPequeno ((%contenidoTexto;)*)>
 <!ELEMENT codigo (#PCDATA)>
 <!ELEMENT preformateado (#PCDATA)>
-<!ELEMENT abreviatura (#PCDATA)>
-<!ELEMENT textoPequeno (#PCDATA)>
+<!ELEMENT cita ((%contenidoTexto;)*)>
+<!ATTLIST cita
+        autor CDATA #IMPLIED>
+<!ELEMENT marcado ((%contenidoTexto;)*)>
+<!ELEMENT subindice ((%contenidoTexto;)*)>
+<!ELEMENT superindice ((%contenidoTexto;)*)>
+<!ELEMENT direccion ((%contenidoTexto;)*)>
+<!ELEMENT tiempo ((%contenidoTexto;)*)>
+<!ELEMENT saltoLinea EMPTY>
+<!ELEMENT separador EMPTY>
 
 <!-- LISTA -->
 <!ELEMENT lista (elementoLista+)>
 <!ATTLIST lista
     tipo (ordenada | desordenada) "desordenada">
-<!ELEMENT elementoLista (#PCDATA)>
+<!ELEMENT elementoLista ((%contenidoTexto;)*)>
+
+<!ELEMENT listaDefiniciones (termino, definicion)+>
+<!ELEMENT termino ((%contenidoTexto;)*)>
+<!ELEMENT definicion ((%contenidoTexto;)*)>
 
 <!-- TABLA -->
-<!ELEMENT tabla (leyenda?, cabecera?, cuerpoTabla)>
+<!ELEMENT tabla (leyenda?, cabecera?, cuerpoTabla, pieTabla?)>
 
 <!ELEMENT leyenda (#PCDATA)>
 <!ELEMENT cabecera (fila+)>
 <!ELEMENT cuerpoTabla (fila+)>
+<!ELEMENT pieTabla (fila+)>
 
-<!ELEMENT fila (celda+)>
-<!ELEMENT celda (#PCDATA)>
+<!ELEMENT fila (celda | celdaCabecera)+>
+<!ELEMENT celda ((%contenidoTexto;)*)>
+<!ELEMENT celdaCabecera ((%contenidoTexto;)*)>
+<!ATTLIST celdaCabecera
+        colspan CDATA #IMPLIED
+        rowspan CDATA #IMPLIED>
 
 <!-- FORMULARIO -->
 <!ELEMENT formulario (etiqueta | entrada | boton | areaTexto | seleccion)*>
@@ -78,36 +112,83 @@
         action CDATA #IMPLIED
         method (get | post) "get">
 
-<!ELEMENT etiqueta (#PCDATA)>
+<!ELEMENT grupoFormulario (
+        leyenda |
+        etiqueta |
+        entrada |
+        boton |
+        areaTexto |
+        seleccion
+        )+>
+
+<!ELEMENT etiqueta ((%contenidoTexto;)*)>
 <!ATTLIST etiqueta
         para CDATA #IMPLIED>
 
 <!ELEMENT entrada EMPTY>
 <!ATTLIST entrada
-        tipo CDATA #REQUIRED
+        tipo (
+            text |
+            password |
+            email |
+            number |
+            date |
+            time |
+            datetime |
+            url |
+            tel |
+            search |
+            checkbox |
+            radio |
+            file |
+            color |
+            range |
+            hidden |
+            submit |
+            reset
+            ) "text"
         nombre CDATA #IMPLIED
         valor CDATA #IMPLIED
         placeholder CDATA #IMPLIED
-        requerido (true | false) "false">
+        requerido (true | false) "false"
+        deshabilitado (true | false) "false">
 
-<!ELEMENT boton (#PCDATA)>
+<!ELEMENT boton ((%contenidoTexto;)*)>
+<!ATTLIST boton
+        tipo (button | submit | reset) "submit">
 <!ELEMENT areaTexto (#PCDATA)>
 <!ELEMENT seleccion (opcion+)>
+<!ATTLIST seleccion
+        nombre CDATA #IMPLIED
+        requerido (true | false) "false">
 <!ELEMENT opcion (#PCDATA)>
 <!ATTLIST opcion
-        valor CDATA #IMPLIED>
+        valor CDATA #IMPLIED
+        seleccionado (true|false) "false">
+<!ELEMENT salida ((%contenidoTexto;)*)>
 
 <!-- MULTIMEDIA -->
 <!ELEMENT multimedia EMPTY>
 <!ATTLIST multimedia
         tipo (imagen | video | audio) #REQUIRED
         src CDATA #REQUIRED
-        alt CDATA #IMPLIED>
+        alt CDATA #IMPLIED
+        controles (true | false) "false"
+        autoplay (true | false) "false"
+        loop (true | false) "false"
+        muted (true | false) "false"
+        poster CDATA #IMPLIED
+        ancho CDATA #IMPLIED
+        alto CDATA #IMPLIED>
 
-<!-- MULTIMEDIA -->
 <!ELEMENT enlace (#PCDATA)>
 <!ATTLIST enlace
     href CDATA #REQUIRED
     target CDATA #IMPLIED>
 
 <!ELEMENT figura (multimedia, leyenda?)>
+
+<!-- INTERACTIVO -->
+<!ELEMENT detalles (%contenidoTexto;)*, (%contenidoElemento;)*)>
+
+<!ELEMENT dialogo ((%contenidoElemento;)*)>

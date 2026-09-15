@@ -7,6 +7,7 @@ import prettier from "prettier/standalone";
 import parserHtml from "prettier/plugins/html";
 import { validateDtd, validateXsd, validateW3C, generateHtml } from "./Api";
 import Tabs from "./componentes/Tab";
+import HelpPanel from "./componentes/HelpPanel";
 
 const baseXml = `<?xml version="1.0"?>
 <!DOCTYPE articulo SYSTEM "articulo.dtd">
@@ -129,6 +130,7 @@ Pulsa Generar HTML cuando el XML sea válido en DTD y XSD para obtener un buen H
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("xml");
+  const [showHelp, setShowHelp] = useState(false);
 
   const [xml, setXml] = useState(baseXml);
   const [xsd, setXsd] = useState(baseXsd);
@@ -245,57 +247,92 @@ export default function App() {
   };
 
   return (
-    <div>
-      <h2>Editor XML</h2>
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      <XmlToolbar onFormat={handleFormat} onClean={handleClean} onReset={handleReset} />
-       {activeTab === "xml" && (
-        <XmlEditor value={xml} onChange={setXml} />
-      )}
+  <div className="app">
+    <header className="app-header">
+      <div>
+        <span className="app-kicker">XML WORKSPACE</span>
+        <h1>Editor XML</h1>
+      </div>
 
-      {activeTab === "xsd" && (
-        <XmlEditor value={xsd} onChange={xsd} />
-      )}
+      <button
+        type="button"
+        className="help-button"
+        onClick={() => setShowHelp((visible) => !visible)}
+        aria-label="Mostrar u ocultar ayuda"
+      >
+        Ayuda
+      </button>
+    </header>
 
-      {activeTab === "dtd" && (
-        <XmlEditor value={dtd} onChange={dtd} />
-      )}
+    <Tabs
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+    />
 
-      {activeTab === "html" && (
-        <XmlEditor value={html} onChange={html} />
-      )}
+    <XmlToolbar
+      onFormat={handleFormat}
+      onClean={handleClean}
+      onReset={handleReset}
+    />
+  <main className="workspace">
+    <section className="editor-area">
 
-      {activeTab === "xml" && (
-        <div>
-          <button onClick={handleValidateDtd}>Validar DTD</button>
-          <button onClick={handleValidateXsd}>Validar XSD</button>
-          <button onClick={handleGenerateHtml}>Generar HTML</button>
-        </div>
-      )}
+        {activeTab === "xml" && (
+          <XmlEditor value={xml} onChange={setXml} />
+        )}
 
-      {activeTab === "html" && (
-        <div>
-          <button onClick={handleValidateW3C}>Validar W3C</button>
-        </div>
-      )}
+        {activeTab === "xsd" && (
+          <XmlEditor value={xsd} onChange={xsd} />
+        )}
 
-      {valid !== null  &&(
+        {activeTab === "dtd" && (
+          <XmlEditor value={dtd} onChange={dtd} />
+        )}
+
+        {activeTab === "html" && (
+          <XmlEditor value={html} onChange={html} />
+        )}
+
+        {activeTab === "xml" && (
           <div>
-            {valid ? (
-              <p style={{ color: "green" }}>CORRECTO: {validText}</p>
-            ) : (
-              <p style={{ color: "red" }}>FALLO: {validText}</p>
-            )}
+            <button onClick={handleValidateDtd}>Validar DTD</button>
+            <button onClick={handleValidateXsd}>Validar XSD</button>
+            <button onClick={handleGenerateHtml}>Generar HTML</button>
           </div>
-      )}
-  
-        <ul>
-          {errors.map((err, i) => (
-            <li key={i}>
-              Línea {err.line}, Columna {err.column}: {err.message}
-            </li>
-          ))}
-        </ul>
+        )}
+
+        {activeTab === "html" && (
+          <div>
+            <button onClick={handleValidateW3C}>Validar W3C</button>
+          </div>
+        )}
+      
+         {valid !== null  &&(
+            <div>
+              {valid ? (
+                <p style={{ color: "green" }}>CORRECTO: {validText}</p>
+              ) : (
+                <p style={{ color: "red" }}>FALLO: {validText}</p>
+              )}
+            </div>
+        )}
+    
+          <ul>
+            {errors.map((err, i) => (
+              <li key={i}>
+                Línea {err.line}, Columna {err.column}: {err.message}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {showHelp && (
+          <HelpPanel
+            activeTab={activeTab}
+            onClose={() => setShowHelp(false)}
+          />
+        )}
+      </main>
     </div>
   );
 }

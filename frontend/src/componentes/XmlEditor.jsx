@@ -47,9 +47,16 @@ export default function XmlEditor({ value, onChange }) {
 
   return (
     <div>
-      <div style={{ border: "1px solid #ccc", borderRadius: "6px" }}>
+      <div 
+       style={{
+        height: "500px",
+        minHeight: 0,
+        overflow: "hidden",
+        border: "1px solid #3e3e42",
+        borderRadius: "6px"
+      }}>
         <Editor
-          height="500px"
+          height="100%"
           language="xml"
           value={value}
           onChange={(v) => onChange(v || "")}

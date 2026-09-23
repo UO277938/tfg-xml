@@ -10,118 +10,105 @@
         formulario |
         seccion |
         articulo |
-        aside |
+        aparte |
         contenedor |
         detalles |
-        dialogo">
+        dialogo |
+        preformateado">
 
 <!ENTITY % contenidoTexto
-        "#PCDATA |
-        negrita |
-        cursiva |
-        subrayado |
-        tachado |
-        enfasis |
-        marcado |
-        abreviatura |
-        textoPequeno |
-        subindice |
-        superindice |
+        "(#PCDATA |
         codigo |
         enlace |
-        direccion |
-        tiempo |
-        saltoLinea">
+        saltoLinea)*">
 
 <!-- ESTRUCTURA -->
 <!ELEMENT documento (metadatos, cuerpo)>
 <!-- METADATOS -->
-<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
-<!ELEMENT titulo ((%contenidoTexto;)*)>
-<!ATTLIST titulo
-        nivel (h1 | h2 | h3 | h4 | h5 | h6) #REQUIRED>
+<!ELEMENT metadatos (tituloHTML, autor, fecha, resumen?)>
+<!ELEMENT tituloHTML (#PCDATA)>
 <!ELEMENT autor (#PCDATA)>
 <!ELEMENT fecha (#PCDATA)>
-<!ELEMENT resumen (#PCDATA)>
+<!ELEMENT resumen %contenidoTexto;>
 
 <!-- SECCIONES -->
-<!ELEMENT cuerpo (header?, nav?, aside?, main, footer?)>
+<!ELEMENT cuerpo (encabezado?, navegacion?, aparte?, principal?, pie?)>
 
-<!ELEMENT articulo (titulo, (%contenidoElemento;)*)>
-<!ELEMENT seccion (titulo, (%contenidoElemento;)*)>
-<!ELEMENT nav ((%contenidoElemento;)*)>
-<!ELEMENT aside (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT header (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT footer ((%contenidoElemento;)*)>
+<!ELEMENT articulo (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT seccion (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT navegacion (enlace | lista)*>
+<!ELEMENT aparte (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT encabezado (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT pie ((%contenidoElemento;)*)>
+<!ELEMENT contenedor ((%contenidoElemento;)*)>
 
-<!ELEMENT main ((%contenidoElemento;)*)>
+<!ELEMENT principal ((%contenidoElemento;)*)>
 
 
 <!-- CONTENIDO -->
+<!ELEMENT titulo %contenidoTexto;>
+<!ATTLIST titulo nivel (1|2|3|4|5|6) #REQUIRED>
+<!ELEMENT parrafo %contenidoTexto;>
 
 <!-- TEXTO -->
-<!ELEMENT parrafo ((%contenidoTexto;)*)>
-<!ELEMENT negrita ((%contenidoTexto;)*)>
-<!ELEMENT cursiva ((%contenidoTexto;)*)>
-<!ELEMENT subrayado ((%contenidoTexto;)*)>
-<!ELEMENT tachado ((%contenidoTexto;)*)>
-<!ELEMENT enfasis ((%contenidoTexto;)*)>
-<!ELEMENT abreviatura ((%contenidoTexto;)*)>
-<!ELEMENT textoPequeno ((%contenidoTexto;)*)>
 <!ELEMENT codigo (#PCDATA)>
 <!ELEMENT preformateado (#PCDATA)>
-<!ELEMENT cita ((%contenidoTexto;)*)>
-<!ATTLIST cita
-        autor CDATA #IMPLIED>
-<!ELEMENT marcado ((%contenidoTexto;)*)>
-<!ELEMENT subindice ((%contenidoTexto;)*)>
-<!ELEMENT superindice ((%contenidoTexto;)*)>
-<!ELEMENT direccion ((%contenidoTexto;)*)>
-<!ELEMENT tiempo ((%contenidoTexto;)*)>
+<!ELEMENT cita %contenidoTexto;>
+<!ATTLIST cita autor CDATA #IMPLIED>
 <!ELEMENT saltoLinea EMPTY>
-<!ELEMENT separador EMPTY>
 
 <!-- LISTA -->
 <!ELEMENT lista (elementoLista+)>
 <!ATTLIST lista
     tipo (ordenada | desordenada) "desordenada">
-<!ELEMENT elementoLista ((%contenidoTexto;)*)>
+<!ELEMENT elementoLista %contenidoTexto;>
 
 <!ELEMENT listaDefiniciones (termino, definicion)+>
-<!ELEMENT termino ((%contenidoTexto;)*)>
-<!ELEMENT definicion ((%contenidoTexto;)*)>
+<!ELEMENT termino %contenidoTexto;>
+<!ELEMENT definicion %contenidoTexto;>
 
 <!-- TABLA -->
 <!ELEMENT tabla (leyenda?, cabecera?, cuerpoTabla, pieTabla?)>
 
-<!ELEMENT leyenda (#PCDATA)>
+<!ELEMENT leyenda %contenidoTexto;>
 <!ELEMENT cabecera (fila+)>
 <!ELEMENT cuerpoTabla (fila+)>
 <!ELEMENT pieTabla (fila+)>
 
 <!ELEMENT fila (celda | celdaCabecera)+>
-<!ELEMENT celda ((%contenidoTexto;)*)>
-<!ELEMENT celdaCabecera ((%contenidoTexto;)*)>
+<!ELEMENT celda %contenidoTexto;>
+<!ATTLIST celda
+        colspan CDATA #IMPLIED
+        rowspan CDATA #IMPLIED>
+<!ELEMENT celdaCabecera %contenidoTexto;>
 <!ATTLIST celdaCabecera
         colspan CDATA #IMPLIED
         rowspan CDATA #IMPLIED>
 
 <!-- FORMULARIO -->
-<!ELEMENT formulario (etiqueta | entrada | boton | areaTexto | seleccion)*>
+<!ELEMENT formulario (
+        etiqueta |
+        entrada |
+        boton |
+        areaTexto |
+        seleccion |
+        grupoFormulario |
+        salida
+        )*>
 <!ATTLIST formulario
         action CDATA #IMPLIED
         method (get | post) "get">
 
 <!ELEMENT grupoFormulario (
-        leyenda |
-        etiqueta |
+        leyenda,
+        (etiqueta |
         entrada |
         boton |
         areaTexto |
-        seleccion
-        )+>
+        seleccion |
+        salida)+)>
 
-<!ELEMENT etiqueta ((%contenidoTexto;)*)>
+<!ELEMENT etiqueta %contenidoTexto;>
 <!ATTLIST etiqueta
         para CDATA #IMPLIED>
 
@@ -153,7 +140,7 @@
         requerido (true | false) "false"
         deshabilitado (true | false) "false">
 
-<!ELEMENT boton ((%contenidoTexto;)*)>
+<!ELEMENT boton %contenidoTexto;>
 <!ATTLIST boton
         tipo (button | submit | reset) "submit">
 <!ELEMENT areaTexto (#PCDATA)>
@@ -165,7 +152,7 @@
 <!ATTLIST opcion
         valor CDATA #IMPLIED
         seleccionado (true|false) "false">
-<!ELEMENT salida ((%contenidoTexto;)*)>
+<!ELEMENT salida %contenidoTexto;>
 
 <!-- MULTIMEDIA -->
 <!ELEMENT multimedia EMPTY>
@@ -189,6 +176,6 @@
 <!ELEMENT figura (multimedia, leyenda?)>
 
 <!-- INTERACTIVO -->
-<!ELEMENT detalles (%contenidoTexto;)*, (%contenidoElemento;)*)>
-
+<!ELEMENT detalles (resumenDetalles, (%contenidoElemento;)*)>
+<!ELEMENT resumenDetalles %contenidoTexto;>
 <!ELEMENT dialogo ((%contenidoElemento;)*)>

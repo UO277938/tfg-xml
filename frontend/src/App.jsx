@@ -22,109 +22,6 @@ const baseXml = `<?xml version="1.0"?>
   </contenido>
 </articulo>`;
 
-const baseDtd = `<!ELEMENT articulo (metadatos, contenido)>
-
-<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
-<!ELEMENT titulo (#PCDATA)>
-<!ELEMENT autor (#PCDATA)>
-<!ELEMENT fecha (#PCDATA)>
-<!ELEMENT resumen (#PCDATA)>
-
-<!ELEMENT contenido (seccion+)>
-
-<!ELEMENT seccion (tituloSeccion, parrafo+, lista?, imagen*)>
-
-<!ELEMENT tituloSeccion (#PCDATA)>
-<!ELEMENT parrafo (#PCDATA)>
-
-<!ELEMENT lista (elementoLista+)>
-<!ELEMENT elementoLista (#PCDATA)>
-
-<!ELEMENT imagen EMPTY>
-<!ATTLIST imagen
-        src CDATA #REQUIRED
-        alt CDATA #IMPLIED>`;
-
-const  baseXsd = `<?xml version="1.0" encoding="UTF-8"?>
-
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-        <xs:element name="articulo">
-                <xs:complexType>
-                        <xs:sequence>
-                                <xs:element name="metadatos">
-                                        <xs:complexType>
-                                                <xs:sequence>
-                                                        <xs:element ref="titulo"/>
-                                                        <xs:element ref="autor"/>
-                                                        <xs:element ref="fecha"/>
-                                                        <xs:element ref="resumen" minOccurs="0"/>
-                                                </xs:sequence>
-                                        </xs:complexType>
-                                </xs:element>
-
-                                <xs:element name="contenido" >
-                                        <xs:complexType>
-                                                <xs:sequence>
-                                                        <xs:element minOccurs="1" maxOccurs="unbounded" ref="seccion" />
-                                                </xs:sequence>
-                                        </xs:complexType>
-                                </xs:element>
-                        </xs:sequence>
-                </xs:complexType>
-        </xs:element>
-
-        <xs:element name="titulo">
-                <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                                <xs:maxLength value="120"/>
-                        </xs:restriction>
-                </xs:simpleType>
-        </xs:element>
-        <xs:element name="autor">
-                <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                                <xs:maxLength value="50"/>
-                        </xs:restriction>
-                </xs:simpleType>
-        </xs:element>
-        <xs:element name="fecha" type="xs:date"/>
-        <xs:element name="resumen">
-                <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                                <xs:maxLength value="300"/>
-                        </xs:restriction>
-                </xs:simpleType>
-        </xs:element>
-
-        <xs:element name="seccion">
-                <xs:complexType>
-                        <xs:sequence>
-                                <xs:element ref="tituloSeccion"/>
-                                <xs:element ref="parrafo" maxOccurs="unbounded"/>
-                                <xs:element ref="lista" minOccurs="0"/>
-                                <xs:element ref="imagen" minOccurs="0" maxOccurs="unbounded"/>
-                        </xs:sequence>
-                </xs:complexType>
-        </xs:element>
-
-        <xs:element name="tituloSeccion" type="xs:string"/>
-        <xs:element name="parrafo" type="xs:string"/>
-        <xs:element name="lista">
-                <xs:complexType>
-                        <xs:sequence>
-                                <xs:element ref="elementoLista" minOccurs="1" maxOccurs="unbounded"/>
-                        </xs:sequence>
-                </xs:complexType>
-        </xs:element>
-        <xs:element name="elementoLista" type="xs:string"/>
-        <xs:element name="imagen">
-                <xs:complexType>
-                        <xs:attribute name="src" type="xs:string" use="required"/>
-                        <xs:attribute name="alt" type="xs:string"/>
-                </xs:complexType>
-        </xs:element>
-</xs:schema>`;
-
 const baseHtml = `Aqui obtendrás un HTML a partir de tu XML válido.
 Pulsa Generar HTML cuando el XML sea válido en DTD y XSD para obtener un buen HTML.`
 
@@ -133,8 +30,6 @@ export default function App() {
   const [showHelp, setShowHelp] = useState(false);
 
   const [xml, setXml] = useState(baseXml);
-  const [xsd, setXsd] = useState(baseXsd);
-  const [dtd, setDtd] = useState(baseDtd);
 
   const [errors, setErrors] = useState([]);
   const [valid, setValid] = useState(null);
@@ -143,7 +38,7 @@ export default function App() {
 
   const [html, setHtml] = useState(baseHtml);
 
-  const handleValidateDtd = async () => {
+  const handleValidate = async () => {
     if(activeTab == "xml"){
       try {
         const res = await validateDtd(xml);
@@ -151,39 +46,6 @@ export default function App() {
         setErrors(res.errors);
         setValid(res.valid);
         setValidText("XML CON DTD")
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
-
-  const handleValidateXsd = async () => {
-    if(activeTab == "xml"){
-      try {
-        const res = await validateXsd(xml);
-        console.log(res);
-        setErrors(res.errors);
-        setValid(res.valid);
-        setValidText("XML CON XSD")
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
-
-  const handleGenerateHtml = async () => {
-    if(activeTab == "xml"){
-      try {
-        setActiveTab("html"); 
-        const res = await generateHtml(xml);
-        console.log(res);
-        setValid(null);
-        setValidText("")
-        if(res.valid){
-          setHtml(res.html);
-          setErrors([])
-        }
-        
       } catch (e) {
         console.error(e);
       }
@@ -208,10 +70,6 @@ export default function App() {
   const handleFormat = async () => {
     if(activeTab == "xml")
       setXml(vkbeautify.xml(xml));
-    else if(activeTab=="xsd")
-      setXsd(vkbeautify.xml(xsd));
-    else if(activeTab=="dtd")
-      setDtd(vkbeautify.xml(dtd));
 
     else if (activeTab === "html") {
 
@@ -227,10 +85,6 @@ export default function App() {
   const handleClean = () => {
     if(activeTab == "xml")
       setXml(``);
-    else if(activeTab=="xsd")
-      setXsd(``);
-    else if(activeTab=="dtd")
-      setDtd(``);
     else if(activeTab=="html")
       setHtml(``);
   };
@@ -238,10 +92,6 @@ export default function App() {
   const handleReset = () => {
     if(activeTab == "xml")
       setXml(baseXml);
-    else if(activeTab=="xsd")
-      setXsd(baseXsd);
-    else if(activeTab=="dtd")
-      setDtd(baseDtd);
     else if(activeTab=="html")
       setHtml(baseHtml);
   };
@@ -281,24 +131,18 @@ export default function App() {
           <XmlEditor value={xml} onChange={setXml} />
         )}
 
-        {activeTab === "xsd" && (
-          <XmlEditor value={xsd} onChange={xsd} />
-        )}
-
-        {activeTab === "dtd" && (
-          <XmlEditor value={dtd} onChange={dtd} />
-        )}
-
         {activeTab === "html" && (
           <XmlEditor value={html} onChange={html} />
         )}
 
         {activeTab === "xml" && (
-          <div>
-            <button onClick={handleValidateDtd}>Validar DTD</button>
-            <button onClick={handleValidateXsd}>Validar XSD</button>
-            <button onClick={handleGenerateHtml}>Generar HTML</button>
-          </div>
+          <button
+            type="button"
+            className="primary-action"
+            onClick={handleValidate}
+          >
+            ✓ Validar documento
+          </button>
         )}
 
         {activeTab === "html" && (
@@ -328,7 +172,6 @@ export default function App() {
 
         {showHelp && (
           <HelpPanel
-            activeTab={activeTab}
             onClose={() => setShowHelp(false)}
           />
         )}

@@ -1,0 +1,103 @@
+export const baseDtd = `<!ELEMENT articulo (metadatos, contenido)>
+
+<!ELEMENT metadatos (titulo, autor, fecha, resumen?)>
+<!ELEMENT titulo (#PCDATA)>
+<!ELEMENT autor (#PCDATA)>
+<!ELEMENT fecha (#PCDATA)>
+<!ELEMENT resumen (#PCDATA)>
+
+<!ELEMENT contenido (seccion+)>
+
+<!ELEMENT seccion (tituloSeccion, parrafo+, lista?, imagen*)>
+
+<!ELEMENT tituloSeccion (#PCDATA)>
+<!ELEMENT parrafo (#PCDATA)>
+
+<!ELEMENT lista (elementoLista+)>
+<!ELEMENT elementoLista (#PCDATA)>
+
+<!ELEMENT imagen EMPTY>
+<!ATTLIST imagen
+        src CDATA #REQUIRED
+        alt CDATA #IMPLIED>`;
+
+export const  baseXsd = `<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:element name="articulo">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element name="metadatos">
+                                        <xs:complexType>
+                                                <xs:sequence>
+                                                        <xs:element ref="titulo"/>
+                                                        <xs:element ref="autor"/>
+                                                        <xs:element ref="fecha"/>
+                                                        <xs:element ref="resumen" minOccurs="0"/>
+                                                </xs:sequence>
+                                        </xs:complexType>
+                                </xs:element>
+
+                                <xs:element name="contenido" >
+                                        <xs:complexType>
+                                                <xs:sequence>
+                                                        <xs:element minOccurs="1" maxOccurs="unbounded" ref="seccion" />
+                                                </xs:sequence>
+                                        </xs:complexType>
+                                </xs:element>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+
+        <xs:element name="titulo">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:maxLength value="120"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+        <xs:element name="autor">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:maxLength value="50"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+        <xs:element name="fecha" type="xs:date"/>
+        <xs:element name="resumen">
+                <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                                <xs:maxLength value="300"/>
+                        </xs:restriction>
+                </xs:simpleType>
+        </xs:element>
+
+        <xs:element name="seccion">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="tituloSeccion"/>
+                                <xs:element ref="parrafo" maxOccurs="unbounded"/>
+                                <xs:element ref="lista" minOccurs="0"/>
+                                <xs:element ref="imagen" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+
+        <xs:element name="tituloSeccion" type="xs:string"/>
+        <xs:element name="parrafo" type="xs:string"/>
+        <xs:element name="lista">
+                <xs:complexType>
+                        <xs:sequence>
+                                <xs:element ref="elementoLista" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                </xs:complexType>
+        </xs:element>
+        <xs:element name="elementoLista" type="xs:string"/>
+        <xs:element name="imagen">
+                <xs:complexType>
+                        <xs:attribute name="src" type="xs:string" use="required"/>
+                        <xs:attribute name="alt" type="xs:string"/>
+                </xs:complexType>
+        </xs:element>
+</xs:schema>`;
+

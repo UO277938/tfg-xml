@@ -1,5 +1,6 @@
 package com.tfg.xmlvalidator.controller;
 
+import com.tfg.xmlvalidator.model.PipelineResult;
 import com.tfg.xmlvalidator.model.ValidationResult;
 import com.tfg.xmlvalidator.model.XmlRequest;
 import com.tfg.xmlvalidator.service.*;
@@ -52,13 +53,18 @@ public class TestController {
         }
     }
 
-    @PostMapping("/validar-documento")
-    public ValidationResult validarDocumento() {
+    @PostMapping("/pipeline")
+    public ResponseEntity<PipelineResult> process(@RequestBody XmlRequest request) {
+        DtdValidationService dtdValidationService = new DtdValidationService();
+        XsdValidationService xsdValidationService = new XsdValidationService();
+        XsltTransformationService xsltService = new XsltTransformationService();
+        W3cValidationService w3cValidationService = new W3cValidationService();
+        XmlPipelineService pipelineService = new XmlPipelineService(
+                dtdValidationService, xsdValidationService, xsltService, w3cValidationService);
 
-        XmlValidationPipelineService pipeline =
-                new XmlValidationPipelineService();
-
-        return pipeline.validateAll();
+        return ResponseEntity.ok(
+                pipelineService.execute(request.getXml())
+        );
     }
 
 }

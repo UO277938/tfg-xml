@@ -1,0 +1,20 @@
+button:hover {
+  background: #37373d;
+}
+
+button span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #4fc1ff;
+  color: #1e1e1e;
+
+  font-size: 12px;
+  font-weight: 700;
+}

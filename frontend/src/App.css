@@ -265,3 +265,43 @@ body {
     flex-direction: column;
   }
 }
+
+.help-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 14px;
+
+  border: 1px solid #4fc1ff;
+  border-radius: 6px;
+
+  color: #ffffff;
+  background: #2d2d30;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.help-button:hover {
+  background: #37373d;
+}
+
+.help-button span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+
+  background: #4fc1ff;
+  color: #1e1e1e;
+
+  font-size: 12px;
+  font-weight: 700;
+}

@@ -1,0 +1,81 @@
+.xml-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.xml-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 88px;
+  padding: 8px 12px;
+
+  border: 1px solid #3e3e42;
+  border-radius: 6px;
+
+  color: #cfcfcf;
+  background: #2d2d30;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+.xml-toolbar button:hover {
+  color: #ffffff;
+  background: #37373d;
+  border-color: #555;
+}
+
+.xml-toolbar button:active {
+  transform: translateY(1px);
+}
+/*FORMATEAR*/
+.xml-toolbar button:first-child {
+  color: #9cdcfe;
+}
+.xml-toolbar button:first-child:hover {
+  color: #ffffff;
+  background: #264f78;
+  border-color: #3794ff;
+}
+/*LIMPIAR*/
+.xml-toolbar button:nth-child(2) {
+  color: #f48771;
+}
+.xml-toolbar button:nth-child(2):hover {
+  color: #ffffff;
+  background: #5a2d2d;
+  border-color: #c94f4f;
+}
+
+/*REINICIAR*/
+.xml-toolbar button:nth-child(3) {
+  color: #dcdcaa;
+}
+
+.xml-toolbar button:nth-child(3):hover {
+  color: #ffffff;
+  background: #4a4526;
+  border-color: #a6a15c;
+}
+
+@media (max-width: 600px) {
+  .xml-toolbar {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .xml-toolbar button {
+    flex: 1;
+    min-width: 0;
+  }
+}

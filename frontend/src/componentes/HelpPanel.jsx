@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./HelpPanel.css";
 
 import { baseDtd, baseXsd } from "../especificacion/especificacion";
@@ -18,15 +18,17 @@ const helpSections = [
       },
       {
         title: "Ejemplo",
-        code: `<articulo>
-                <metadatos>
-                  <titulo>Título</titulo>
-                  <autor>Autor</autor>
-                </metadatos>
-                <contenido>
-                  ...
-                </contenido>
-              </articulo>`
+        code: [
+          "<articulo>",
+          "  <metadatos>",
+          "    <titulo>Título</titulo>",
+          "    <autor>Autor</autor>",
+          "  </metadatos>",
+          "  <contenido>",
+          "    ...",
+          "  </contenido>",
+          "</articulo>"
+        ].join("\n")
       }
     ]
   },
@@ -159,65 +161,103 @@ function HelpSection({ title, text, code }) {
 
 export default function HelpPanel({ onClose }) {
   const [activeSection, setActiveSection] = useState("xml");
+  const [helpWidth, setHelpWidth] = useState(500);
+  const [isResizing, setIsResizing] = useState(false);
+
+    useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (event) => {
+      const newWidth = window.innerWidth - event.clientX;
+
+      setHelpWidth(
+        Math.min(
+          Math.max(newWidth, 320),
+          window.innerWidth * 0.7
+        )
+      );
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
 
   const section = helpSections.find(
     (item) => item.id === activeSection
   );
 
   return (
-    <aside className="help-panel" aria-label="Panel de ayuda">
+    <aside
+      className="help-panel"
+      aria-label="Panel de ayuda"
+      style={{ width: `${helpWidth}px` }}
+    >
+      <div
+        className="help-resizer"
+        onMouseDown={() => setIsResizing(true)}
+        aria-hidden="true"
+      />
 
-      <header className="help-header">
-        <div>
-          <span className="help-label">DOCUMENTACIÓN</span>
-          <h3>Ayuda del editor</h3>
+        <header className="help-header">
+          <div>
+            <span className="help-label">DOCUMENTACIÓN</span>
+            <h3>Ayuda del editor</h3>
+          </div>
+
+          <button
+            type="button"
+            className="help-close"
+            onClick={onClose}
+            aria-label="Cerrar ayuda"
+          >
+            ×
+          </button>
+        </header>
+
+        <div className="help-body">
+
+          <nav className="help-navigation">
+            {helpSections.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={
+                  activeSection === item.id
+                    ? "help-nav-item active"
+                    : "help-nav-item"
+                }
+                onClick={() => setActiveSection(item.id)}
+              >
+                {item.title}
+              </button>
+            ))}
+          </nav>
+
+          <div className="help-content">
+
+            <h2>{section.title}</h2>
+
+            {section.content.map((item, index) => (
+              <HelpSection
+                key={`${section.id}-${index}`}
+                title={item.title}
+                text={item.text}
+                code={item.code}
+              />
+            ))}
+
+          </div>
+
         </div>
-
-        <button
-          type="button"
-          className="help-close"
-          onClick={onClose}
-          aria-label="Cerrar ayuda"
-        >
-          ×
-        </button>
-      </header>
-
-      <div className="help-body">
-
-        <nav className="help-navigation">
-          {helpSections.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={
-                activeSection === item.id
-                  ? "help-nav-item active"
-                  : "help-nav-item"
-              }
-              onClick={() => setActiveSection(item.id)}
-            >
-              {item.title}
-            </button>
-          ))}
-        </nav>
-
-        <div className="help-content">
-
-          <h2>{section.title}</h2>
-
-          {section.content.map((item, index) => (
-            <HelpSection
-              key={`${section.id}-${index}`}
-              title={item.title}
-              text={item.text}
-              code={item.code}
-            />
-          ))}
-
-        </div>
-
-      </div>
-    </aside>
+      </aside>
   );
 }

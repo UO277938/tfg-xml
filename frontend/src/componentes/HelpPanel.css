@@ -1,9 +1,13 @@
 .help-panel {
+  position: relative;
+
   display: flex;
-  flex: 0 0 500px;
-  width: 500px;
-  min-width: 500px;
+  flex: 0 0 auto;
+
+  min-width: 320px;
+  max-width: 70vw;
   min-height: 0;
+
   flex-direction: column;
 
   overflow: hidden;
@@ -70,14 +74,35 @@
   background: #3e3e42;
 }
 
+.help-resizer {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: 8px;
+
+  cursor: ew-resize;
+
+  z-index: 10;
+}
+
+.help-resizer:hover {
+  background: #4fc1ff;
+}
+
 /* CONTENIDO PRINCIPAL */
 
 .help-body {
   display: flex;
 
-  flex: 1;
+  flex: 1 1 auto;
 
+  min-width: 0;
   min-height: 0;
+
+  overflow: hidden;
 }
 
 /* NAVEGACIÓN */
@@ -89,12 +114,15 @@
 
   flex-direction: column;
 
+  min-height: 0;
+
   padding: 10px 0;
 
   border-right: 1px solid #3e3e42;
 
   background: #202020;
 
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -134,13 +162,14 @@
 /* DOCUMENTACIÓN */
 
 .help-content {
-  flex: 1;
+  flex: 1 1 auto;
 
   min-width: 0;
   min-height: 0;
 
   padding: 22px;
 
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -186,29 +215,39 @@
 }
 
 .help-section pre {
-  margin: 12px 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 320px;
 
+  margin: 12px 0 0;
   padding: 14px;
 
   border: 1px solid #3e3e42;
   border-radius: 5px;
 
   color: #d4d4d4;
-
   background: #1e1e1e;
 
   font-family: Consolas, "Courier New", monospace;
   font-size: 12px;
   line-height: 1.6;
 
-  overflow-x: auto;
+  overflow: auto;
 
   user-select: text;
   white-space: pre;
+
+  box-sizing: border-box;
 }
 
-.help-section code {
+.help-section pre code {
+  display: block;
+
+  margin: 0;
+  padding: 0;
+
   font-family: inherit;
+  text-align: left;
 }
 
 /* PANTALLAS PEQUEÑAS */

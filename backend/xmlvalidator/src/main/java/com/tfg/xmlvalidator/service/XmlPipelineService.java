@@ -24,15 +24,51 @@ public class XmlPipelineService {
 
     public PipelineResult execute(String xml) {
 
-        // 1. Validar XML
+        // 1.Validar XML
         ValidationResult dtdResult = dtdValidationService.validateXML(xml);
+        if (!dtdResult.isValid()) {
+            return new PipelineResult(
+                    false,
+                    "DTD",
+                    dtdResult.getErrors(),
+                    null
+            );
+        }
         ValidationResult xsdResult = xsdValidationService.validateXML(xml);
-        // 2. Transformar
+        if (!xsdResult.isValid()) {
+            return new PipelineResult(
+                    false,
+                    "XSD",
+                    xsdResult.getErrors(),
+                    null
+            );
+        }
+        // 2.Transformar
         ValidationResult transformationResult = xsltTransformationService.transformXML(xml);
-
-        // 3. Validar HTML
+        if (!transformationResult.isValid()) {
+            return new PipelineResult(
+                    false,
+                    "Transformation XSLT",
+                    transformationResult.getErrors(),
+                    null
+            );
+        }
+        // 3.Validar HTML
         ValidationResult htmlResult = w3cValidationService.validateHTML(transformationResult.getHtml());
-        // 4. devolver todo
-        return new PipelineResult();
+        if (!htmlResult.isValid()) {
+            return new PipelineResult(
+                    false,
+                    "W3C",
+                    htmlResult.getErrors(),
+                    transformationResult.getHtml()
+            );
+        }
+        // Return
+        return new PipelineResult(
+                true,
+                "W3C",
+                null,
+                transformationResult.getHtml()
+        );
     }
 }

@@ -5,6 +5,7 @@
         <xs:group name="contenidoElemento">
                 <xs:choice>
                         <xs:element ref="parrafo"/>
+                        <xs:element ref="titulo"/>
                         <xs:element ref="lista"/>
                         <xs:element ref="listaDefiniciones"/>
                         <xs:element ref="tabla"/>

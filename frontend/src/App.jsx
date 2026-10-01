@@ -5,25 +5,10 @@ import XmlToolbar from "./componentes/XmlToolbar";
 import vkbeautify from "vkbeautify";
 import prettier from "prettier/standalone";
 import parserHtml from "prettier/plugins/html";
-import { validateDtd, validateXsd, validateW3C, generateHtml } from "./Api";
+import { validate } from "./Api";
 import Tabs from "./componentes/Tab";
 import HelpPanel from "./componentes/HelpPanel";
-
-const baseXml = `<?xml version="1.0"?>
-<!DOCTYPE articulo SYSTEM "articulo.dtd">
-<articulo>
-  <metadatos>
-    <titulo>Titulo</titulo>
-    <autor>Autor</autor>
-    <fecha>2026-03-16</fecha>
-    <resumen>Resumen</resumen>
-  </metadatos>
-  <contenido>
-  </contenido>
-</articulo>`;
-
-const baseHtml = `Aqui obtendrás un HTML a partir de tu XML válido.
-Pulsa Generar HTML cuando el XML sea válido en DTD y XSD para obtener un buen HTML.`
+import {baseXml, baseHtml} from "./especificacion/especificacion.jsx";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("xml");
@@ -34,38 +19,40 @@ export default function App() {
   const [errors, setErrors] = useState([]);
   const [valid, setValid] = useState(null);
 
-  const [validText, setValidText] = useState("");
+  const [fase, setFase] = useState("");
 
   const [html, setHtml] = useState(baseHtml);
 
   const handleValidate = async () => {
-    if(activeTab == "xml"){
-      try {
-        const res = await validateDtd(xml);
-        console.log(res);
-        setErrors(res.errors);
-        setValid(res.valid);
-        setValidText("XML CON DTD")
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
+  if (activeTab !== "xml") return;
 
-  const handleValidateW3C = async () => {
-    if(activeTab == "html"){
-      
-      try {
-        const res = await validateW3C(xml);
-        console.log(res);
-        setErrors(res.errors);
-        setValid(res.valid);
-        setValidText("HTML CON W3C")
-      } catch (e) {
-        console.error(e);
-      }
+  try {
+    const res = await validate(xml);
+
+    console.log("Resultado pipeline:", res);
+
+    setErrors(Array.isArray(res.errores) ? res.errores : []);
+    setValid(res.success);
+    setFase(res.fase ?? "");
+
+    if (res.html) {
+      setHtml(res.html);
     }
-  };
+  } catch (e) {
+    console.error("Error ejecutando el pipeline:", e);
+
+    setErrors([
+      {
+        line: null,
+        column: null,
+        message: "No se ha podido ejecutar el pipeline."
+      }
+    ]);
+
+    setValid(false);
+    setFase("ERROR");
+  }
+};
 
   const handleFormat = async () => {
     if(activeTab == "xml")
@@ -97,7 +84,178 @@ export default function App() {
   };
 
   return (
-  <div className="app">
+    <div className="app">
+
+      <header className="app-header">
+        <div>
+          <span className="app-kicker">XML WORKSPACE</span>
+          <h1>Editor XML</h1>
+        </div>
+
+        {activeTab === "xml" && (
+              <div className="validation-bar">
+
+                <button
+                  type="button"
+                  className="primary-action"
+                  onClick={handleValidate}
+                >✓ Validar documento
+                </button>
+
+              </div>
+            )}
+
+        <button
+          type="button"
+          className="help-button"
+          onClick={() => setShowHelp((visible) => !visible)}
+          aria-label="Mostrar u ocultar ayuda"
+        >
+          <span>?</span>
+          Ayuda
+        </button>
+      </header>
+
+      <main className="workspace">
+
+        <section className="editor-area">
+
+          <div className="editor-topbar">
+
+            <Tabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+
+            <XmlToolbar
+              onFormat={handleFormat}
+              onClean={handleClean}
+              onReset={handleReset}
+            />
+
+          </div>
+
+          <div className="editor-wrapper">
+
+            <div className="editor-container">
+
+              {activeTab === "xml" && (
+                <XmlEditor
+                  value={xml}
+                  onChange={setXml}
+                />
+              )}
+
+              {activeTab === "html" && (
+                <XmlEditor
+                  value={html}
+                  onChange={setHtml}
+                />
+              )}
+
+            </div>
+
+            
+
+            {valid !== null && (
+              <section
+                className={
+                  valid
+                    ? "results-panel results-success"
+                    : "results-panel results-error"
+                }
+              >
+
+                <header className="results-header">
+
+                  <div>
+                    <span className="results-label">
+                      RESULTADO DEL PIPELINE
+                    </span>
+
+                    <h2>
+                      {valid
+                        ? "✓ Documento válido"
+                        : "✕ Documento no válido"}
+                    </h2>
+                  </div>
+
+                  {fase && (
+                    <span className="phase-badge">
+                      {fase}
+                    </span>
+                  )}
+
+                </header>
+
+                {!valid && errors.length > 0 && (
+                  <div className="errors-container">
+
+                    <h3>
+                      Errores encontrados
+                      <span>{errors.length}</span>
+                    </h3>
+
+                    <ul className="error-list">
+
+                      {errors.map((err, i) => (
+                        <li
+                          key={`${err.line}-${err.column}-${i}`}
+                          className="error-item"
+                        >
+
+                          <div className="error-location">
+                            <span>●</span>
+
+                            Línea {err.line ?? "?"}
+                            {" · "}
+                            Columna {err.column ?? "?"}
+                          </div>
+
+                          <div className="error-message">
+                            {err.message}
+                          </div>
+
+                        </li>
+                      ))}
+
+                    </ul>
+
+                  </div>
+                )} 
+
+                {!valid && errors.length === 0 && (
+                  <div className="no-errors-message">
+                    El pipeline ha terminado indicando que el documento no es válido,
+                    pero no se han recibido detalles de los errores.
+                  </div>
+                )}
+
+                {valid && (
+                  <div className="success-message">
+                    El documento ha superado correctamente todas
+                    las fases del pipeline.
+                  </div>
+                )}
+
+              </section>
+            )}
+
+          </div>
+
+        </section>
+
+        {showHelp && (
+          <HelpPanel
+            onClose={() => setShowHelp(false)}
+          />
+        )}
+
+      </main>
+
+    </div>
+  );
+  /*<div className="app">
     <header className="app-header">
       <div>
         <span className="app-kicker">XML WORKSPACE</span>
@@ -144,30 +302,41 @@ export default function App() {
             ✓ Validar documento
           </button>
         )}
-
-        {activeTab === "html" && (
-          <div>
-            <button onClick={handleValidateW3C}>Validar W3C</button>
-          </div>
-        )}
       
-         {valid !== null  &&(
-            <div>
-              {valid ? (
-                <p style={{ color: "green" }}>CORRECTO: {validText}</p>
-              ) : (
-                <p style={{ color: "red" }}>FALLO: {validText}</p>
-              )}
+        {valid !== null && (
+          <div className={valid ? "pipeline-result success" : "pipeline-result error"}>
+
+          <div className="pipeline-status">
+            {valid ? "✓ DOCUMENTO VÁLIDO" : "✕ DOCUMENTO NO VÁLIDO"}
+          </div>
+
+          {fase && (
+            <div className="pipeline-phase">
+              Fase: <strong>{fase}</strong>
             </div>
-        )}
-    
-          <ul>
-            {errors.map((err, i) => (
-              <li key={i}>
-                Línea {err.line}, Columna {err.column}: {err.message}
-              </li>
-            ))}
-          </ul>
+          )}
+
+          {!valid && errors.length > 0 && (
+            <div className="pipeline-errors">
+            <h3>Errores encontrados</h3>
+
+            <ul className="error-list">
+              {errors.map((err, i) => (
+                <li key={i}>
+                  <div>
+                    <strong>
+                      Línea {err.line}, Columna {err.column}
+                    </strong>
+                  </div>
+
+                  <div>{err.message}</div>
+                </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+          )}
         </section>
 
         {showHelp && (
@@ -177,5 +346,5 @@ export default function App() {
         )}
       </main>
     </div>
-  );
+  );*/
 }

@@ -1,4 +1,5 @@
 import Editor from "@monaco-editor/react";
+import "./XmlEditor.css";
 
 export default function XmlEditor({ value, onChange }) {
 
@@ -46,15 +47,7 @@ export default function XmlEditor({ value, onChange }) {
   };
 
   return (
-    <div>
-      <div 
-       style={{
-        height: "500px",
-        minHeight: 0,
-        overflow: "hidden",
-        border: "1px solid #3e3e42",
-        borderRadius: "6px"
-      }}>
+      <div className="xml-editor-wrapper">
         <Editor
           height="100%"
           language="xml"
@@ -73,6 +66,5 @@ export default function XmlEditor({ value, onChange }) {
           }}
         />
       </div>
-    </div>
   );
 }

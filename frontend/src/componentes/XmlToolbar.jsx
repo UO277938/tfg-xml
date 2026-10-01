@@ -1,10 +1,12 @@
+import "./XmlToolbar.css";
+
 export default function XmlToolbar({ onFormat, onClean, onReset }) {
   
   return (
-    <div style={{ marginBottom: 5 }}>
-      <button onClick={onFormat}>Formatear</button>
-      <button onClick={onClean}>Limpiar</button>
-      <button onClick={onReset}>Reiniciar</button>
+    <div className="xml-toolbar">
+      <button type="button" onClick={onFormat}>Formatear</button>
+      <button type="button" onClick={onClean}>Limpiar</button>
+      <button type="button" onClick={onReset}>Reiniciar</button>
     </div>
   );
 }

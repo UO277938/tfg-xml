@@ -1,20 +1,57 @@
-button:hover {
-  background: #37373d;
-}
-
-button span {
+.tabs {
   display: flex;
   align-items: center;
-  justify-content: center;
 
-  width: 20px;
-  height: 20px;
+  min-width: 0;
 
-  border-radius: 50%;
+  border: 1px solid #3e3e42;
+  border-radius: 5px;
 
-  background: #4fc1ff;
-  color: #1e1e1e;
+  background: #252526;
+
+  overflow: hidden;
+}
+
+.tab {
+  padding: 7px 14px;
+
+  border: 0;
+  border-right: 1px solid #3e3e42;
+
+  color: #858585;
+  background: transparent;
 
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.tab:last-child {
+  border-right: 0;
+}
+
+.tab:hover {
+  color: #ffffff;
+  background: #2d2d30;
+}
+
+.tab.active {
+  color: #ffffff;
+  background: #0e639c;
+}
+
+@media (max-width: 600px){
+  .tabs {
+    width: 100%;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 7px 10px;
+  }
 }

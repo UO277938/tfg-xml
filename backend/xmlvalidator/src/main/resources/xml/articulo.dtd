@@ -1,6 +1,7 @@
 <!-- REUTILIZABLE -->
 <!ENTITY % contenidoElemento
         "parrafo |
+        titulo |
         lista |
         listaDefiniciones |
         tabla |

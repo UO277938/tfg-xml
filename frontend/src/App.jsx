@@ -9,9 +9,11 @@ import { validate } from "./Api";
 import Tabs from "./componentes/Tab";
 import HelpPanel from "./componentes/HelpPanel";
 import {baseXml, baseHtml} from "./especificacion/especificacion.jsx";
+import { useTranslation } from "react-i18next";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("xml");
+  const { t, i18n } = useTranslation();
   const [showHelp, setShowHelp] = useState(false);
 
   const [xml, setXml] = useState(baseXml);
@@ -24,35 +26,41 @@ export default function App() {
   const [html, setHtml] = useState(baseHtml);
 
   const handleValidate = async () => {
-  if (activeTab !== "xml") return;
+    if (activeTab !== "xml") return;
 
-  try {
-    const res = await validate(xml);
+    try {
+      const res = await validate(xml, i18n.language);
 
-    console.log("Resultado pipeline:", res);
+      console.log("Resultado pipeline:", res);
 
-    setErrors(Array.isArray(res.errores) ? res.errores : []);
-    setValid(res.success);
-    setFase(res.fase ?? "");
+      setErrors(Array.isArray(res.errores) ? res.errores : []);
+      setValid(res.success);
+      setFase(res.fase ?? "");
 
-    if (res.html) {
-      setHtml(res.html);
-    }
-  } catch (e) {
-    console.error("Error ejecutando el pipeline:", e);
-
-    setErrors([
-      {
-        line: null,
-        column: null,
-        message: "No se ha podido ejecutar el pipeline."
+      if (res.html) {
+        setHtml(res.html);
       }
-    ]);
+    } catch (e) {
+      console.error("Error ejecutando el pipeline:", e);
 
-    setValid(false);
-    setFase("ERROR");
-  }
-};
+      setErrors([
+        {
+          line: null,
+          column: null,
+          message: t("validation.pipelineError")
+        }
+      ]);
+
+      setValid(false);
+      setFase("ERROR");
+    }
+  };
+
+  const changeLanguage = async () => {
+    const newLanguage = i18n.language === "es" ? "en" : "es";
+    await i18n.changeLanguage(newLanguage);
+    localStorage.setItem("language", newLanguage);
+  };
 
   const handleFormat = async () => {
     if(activeTab == "xml")
@@ -88,8 +96,8 @@ export default function App() {
 
       <header className="app-header">
         <div>
-          <span className="app-kicker">XML WORKSPACE</span>
-          <h1>Editor XML</h1>
+          <span className="app-kicker">{t("app.kicker")}</span>
+          <h1>{t("app.title")}</h1>
         </div>
 
         {activeTab === "xml" && (
@@ -99,21 +107,30 @@ export default function App() {
                   type="button"
                   className="primary-action"
                   onClick={handleValidate}
-                >✓ Validar documento
+                >✓ {t("validation.validate")}
                 </button>
 
               </div>
-            )}
+        )}
+        <div className="header-actions">
+          <button
+            type="button"
+            className="language-button"
+            onClick={changeLanguage}
+            aria-label="Cambiar idioma"
+          >
+            {i18n.language === "es" ? "ES" : "EN"}
+          </button>
 
-        <button
-          type="button"
-          className="help-button"
-          onClick={() => setShowHelp((visible) => !visible)}
-          aria-label="Mostrar u ocultar ayuda"
-        >
-          <span>?</span>
-          Ayuda
-        </button>
+          <button
+            type="button"
+            className="help-button"
+            onClick={() => setShowHelp((visible) => !visible)}
+            aria-label={t("app.help")}
+          >
+            {t("app.help")}
+          </button>
+        </div>
       </header>
 
       <main className="workspace">
@@ -170,13 +187,13 @@ export default function App() {
 
                   <div>
                     <span className="results-label">
-                      RESULTADO DEL PIPELINE
+                      {t("validation.result")}
                     </span>
 
                     <h2>
                       {valid
-                        ? "✓ Documento válido"
-                        : "✕ Documento no válido"}
+                        ? `✓ ${t("validation.valid")}`
+                        : `✕ ${t("validation.invalid")}`}
                     </h2>
                   </div>
 
@@ -192,7 +209,7 @@ export default function App() {
                   <div className="errors-container">
 
                     <h3>
-                      Errores encontrados
+                      {t("validation.errors")}
                       <span>{errors.length}</span>
                     </h3>
 
@@ -207,9 +224,9 @@ export default function App() {
                           <div className="error-location">
                             <span>●</span>
 
-                            Línea {err.line ?? "?"}
+                            {t("validation.line")} {err.line ?? "?"}
                             {" · "}
-                            Columna {err.column ?? "?"}
+                            {t("validation.column")} {err.column ?? "?"}
                           </div>
 
                           <div className="error-message">
@@ -226,15 +243,13 @@ export default function App() {
 
                 {!valid && errors.length === 0 && (
                   <div className="no-errors-message">
-                    El pipeline ha terminado indicando que el documento no es válido,
-                    pero no se han recibido detalles de los errores.
+                    {t("validation.noDetails")}
                   </div>
                 )}
 
                 {valid && (
                   <div className="success-message">
-                    El documento ha superado correctamente todas
-                    las fases del pipeline.
+                    {t("validation.success")}
                   </div>
                 )}
 
@@ -255,96 +270,4 @@ export default function App() {
 
     </div>
   );
-  /*<div className="app">
-    <header className="app-header">
-      <div>
-        <span className="app-kicker">XML WORKSPACE</span>
-        <h1>Editor XML</h1>
-      </div>
-
-      <button
-        type="button"
-        className="help-button"
-        onClick={() => setShowHelp((visible) => !visible)}
-        aria-label="Mostrar u ocultar ayuda"
-      >
-        Ayuda
-      </button>
-    </header>
-
-    <Tabs
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-    />
-
-    <XmlToolbar
-      onFormat={handleFormat}
-      onClean={handleClean}
-      onReset={handleReset}
-    />
-  <main className="workspace">
-    <section className="editor-area">
-
-        {activeTab === "xml" && (
-          <XmlEditor value={xml} onChange={setXml} />
-        )}
-
-        {activeTab === "html" && (
-          <XmlEditor value={html} onChange={html} />
-        )}
-
-        {activeTab === "xml" && (
-          <button
-            type="button"
-            className="primary-action"
-            onClick={handleValidate}
-          >
-            ✓ Validar documento
-          </button>
-        )}
-      
-        {valid !== null && (
-          <div className={valid ? "pipeline-result success" : "pipeline-result error"}>
-
-          <div className="pipeline-status">
-            {valid ? "✓ DOCUMENTO VÁLIDO" : "✕ DOCUMENTO NO VÁLIDO"}
-          </div>
-
-          {fase && (
-            <div className="pipeline-phase">
-              Fase: <strong>{fase}</strong>
-            </div>
-          )}
-
-          {!valid && errors.length > 0 && (
-            <div className="pipeline-errors">
-            <h3>Errores encontrados</h3>
-
-            <ul className="error-list">
-              {errors.map((err, i) => (
-                <li key={i}>
-                  <div>
-                    <strong>
-                      Línea {err.line}, Columna {err.column}
-                    </strong>
-                  </div>
-
-                  <div>{err.message}</div>
-                </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-          )}
-        </section>
-
-        {showHelp && (
-          <HelpPanel
-            onClose={() => setShowHelp(false)}
-          />
-        )}
-      </main>
-    </div>
-  );*/
 }

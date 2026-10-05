@@ -1,147 +1,10 @@
 import { useEffect, useState } from "react";
 import "./HelpPanel.css";
 
+import { useTranslation } from "react-i18next";
+
 import { baseDtd, baseXsd } from "../especificacion/especificacion";
 
-const helpSections = [
-  {
-    id: "xml",
-    title: "XML",
-    content: [
-      {
-        title: "¿Qué es XML?",
-        text: "XML es un lenguaje de marcado utilizado para representar información de forma estructurada mediante elementos y atributos."
-      },
-      {
-        title: "Estructura",
-        text: "Un documento XML está formado por elementos organizados jerárquicamente. Cada elemento puede contener otros elementos o texto."
-      },
-      {
-        title: "Ejemplo",
-        code: [
-          "<articulo>",
-          "  <metadatos>",
-          "    <titulo>Título</titulo>",
-          "    <autor>Autor</autor>",
-          "  </metadatos>",
-          "  <contenido>",
-          "    ...",
-          "  </contenido>",
-          "</articulo>"
-        ].join("\n")
-      }
-    ]
-  },
-
-  {
-    id: "dtd",
-    title: "DTD",
-    content: [
-      {
-        title: "¿Qué es un DTD?",
-        text: "Un DTD define las reglas estructurales que debe cumplir un documento XML."
-      },
-      {
-        title: "¿Para qué sirve?",
-        text: "Permite establecer qué elementos pueden aparecer, en qué orden y qué atributos pueden utilizarse."
-      },
-      {
-        title: "Especificación utilizada",
-        text: "Esta es la especificación DTD utilizada por la aplicación para validar el documento XML.",
-        code: baseDtd
-      }
-    ]
-  },
-
-  {
-    id: "xsd",
-    title: "XSD",
-    content: [
-      {
-        title: "¿Qué es XML Schema?",
-        text: "XML Schema (XSD) permite definir de forma más precisa la estructura y las restricciones de un documento XML."
-      },
-      {
-        title: "¿Para qué sirve?",
-        text: "La aplicación utiliza este esquema para comprobar que el XML cumple las restricciones definidas."
-      },
-      {
-        title: "Especificación utilizada",
-        text: "Esta es la especificación XSD utilizada por la aplicación para validar el documento XML.",
-        code: baseXsd
-      }
-    ]
-  },
-
-  {
-    id: "validacion",
-    title: "Validación",
-    content: [
-      {
-        title: "Validación DTD",
-        text: "Comprueba que el documento XML cumple las reglas definidas en el DTD."
-      },
-      {
-        title: "Validación XSD",
-        text: "Comprueba que el documento XML cumple la estructura y los tipos definidos en el esquema XSD."
-      },
-      {
-        title: "Errores",
-        text: "Cuando se produce un error, la aplicación muestra información sobre la línea, columna y descripción del problema."
-      }
-    ]
-  },
-
-  {
-    id: "html",
-    title: "Generación HTML",
-    content: [
-      {
-        title: "Generar HTML",
-        text: "Una vez validado correctamente el XML, puedes generar un documento HTML a partir de su contenido."
-      },
-      {
-        title: "Validación W3C",
-        text: "El HTML generado puede comprobarse mediante el validador del W3C."
-      },
-      {
-        title: "Formato",
-        text: "El botón de formato permite organizar el código HTML para facilitar su lectura."
-      }
-    ]
-  },
-  
-  {
-  id: "proceso",
-  title: "Proceso",
-  content: [
-    {
-      title: "¿Cómo funciona la aplicación?",
-      text: "La aplicación procesa el documento XML mediante una secuencia de validaciones y transformaciones."
-    },
-    {
-      title: "1. XML",
-      text: "Primero se comprueba que el documento XML esté correctamente formado."
-    },
-    {
-      title: "2. DTD",
-      text: "Después se comprueba que la estructura del XML cumple la especificación DTD."
-    },
-    {
-      title: "3. XSD",
-      text: "A continuación se valida el XML utilizando el esquema XSD."
-    },
-    {
-      title: "4. Generación HTML",
-      text: "Si las validaciones anteriores son correctas, el XML se transforma en HTML."
-    },
-    {
-      title: "5. Validación W3C",
-      text: "Finalmente se comprueba la validez del HTML generado."
-    }
-  ]
-}
-];
 
 function HelpSection({ title, text, code }) {
   return (
@@ -160,6 +23,8 @@ function HelpSection({ title, text, code }) {
 }
 
 export default function HelpPanel({ onClose }) {
+
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState("xml");
   const [helpWidth, setHelpWidth] = useState(500);
   const [isResizing, setIsResizing] = useState(false);
@@ -191,9 +56,6 @@ export default function HelpPanel({ onClose }) {
     };
   }, [isResizing]);
 
-  const section = helpSections.find(
-    (item) => item.id === activeSection
-  );
 
   return (
     <aside
@@ -209,15 +71,15 @@ export default function HelpPanel({ onClose }) {
 
         <header className="help-header">
           <div>
-            <span className="help-label">DOCUMENTACIÓN</span>
-            <h3>Ayuda del editor</h3>
+            <span className="help-label">{t("help.label")}</span>
+            <h3>{t("help.title")}</h3>
           </div>
 
           <button
             type="button"
             className="help-close"
             onClick={onClose}
-            aria-label="Cerrar ayuda"
+            aria-label={t("help.close")}
           >
             ×
           </button>
@@ -226,36 +88,199 @@ export default function HelpPanel({ onClose }) {
         <div className="help-body">
 
           <nav className="help-navigation">
-            {helpSections.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={
-                  activeSection === item.id
-                    ? "help-nav-item active"
-                    : "help-nav-item"
-                }
-                onClick={() => setActiveSection(item.id)}
-              >
-                {item.title}
-              </button>
-            ))}
-          </nav>
+  <button
+    type="button"
+    className={activeSection === "xml" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("xml")}
+  >
+    {t("help.navigation.xml")}
+  </button>
+
+  <button
+    type="button"
+    className={activeSection === "dtd" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("dtd")}
+  >
+    {t("help.navigation.dtd")}
+  </button>
+
+  <button
+    type="button"
+    className={activeSection === "xsd" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("xsd")}
+  >
+    {t("help.navigation.xsd")}
+  </button>
+
+  <button
+    type="button"
+    className={activeSection === "validacion" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("validacion")}
+  >
+    {t("help.navigation.validation")}
+  </button>
+
+  <button
+    type="button"
+    className={activeSection === "html" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("html")}
+  >
+    {t("help.navigation.html")}
+  </button>
+
+  <button
+    type="button"
+    className={activeSection === "proceso" ? "help-nav-item active" : "help-nav-item"}
+    onClick={() => setActiveSection("proceso")}
+  >
+    {t("help.navigation.process")}
+  </button>
+</nav>
 
           <div className="help-content">
+  <h2>{t(`help.navigation.${activeSection === "validacion" ? "validation" : activeSection === "proceso" ? "process" : activeSection}`)}</h2>
 
-            <h2>{section.title}</h2>
+  {activeSection === "xml" && (
+    <>
+      <HelpSection
+        title={t("help.xml.what.title")}
+        text={t("help.xml.what.text")}
+      />
 
-            {section.content.map((item, index) => (
-              <HelpSection
-                key={`${section.id}-${index}`}
-                title={item.title}
-                text={item.text}
-                code={item.code}
-              />
-            ))}
+      <HelpSection
+        title={t("help.xml.structure.title")}
+        text={t("help.xml.structure.text")}
+      />
 
-          </div>
+      <HelpSection
+        title={t("help.xml.example.title")}
+        code={[
+          "<articulo>",
+          "  <metadatos>",
+          "    <titulo>Título</titulo>",
+          "    <autor>Autor</autor>",
+          "  </metadatos>",
+          "  <contenido>",
+          "    ...",
+          "  </contenido>",
+          "</articulo>"
+        ].join("\n")}
+      />
+    </>
+  )}
+
+  {activeSection === "dtd" && (
+    <>
+      <HelpSection
+        title={t("help.dtd.what.title")}
+        text={t("help.dtd.what.text")}
+      />
+
+      <HelpSection
+        title={t("help.dtd.purpose.title")}
+        text={t("help.dtd.purpose.text")}
+      />
+
+      <HelpSection
+        title={t("help.dtd.specification.title")}
+        text={t("help.dtd.specification.text")}
+        code={baseDtd}
+      />
+    </>
+  )}
+
+  {activeSection === "xsd" && (
+    <>
+      <HelpSection
+        title={t("help.xsd.what.title")}
+        text={t("help.xsd.what.text")}
+      />
+
+      <HelpSection
+        title={t("help.xsd.purpose.title")}
+        text={t("help.xsd.purpose.text")}
+      />
+
+      <HelpSection
+        title={t("help.xsd.specification.title")}
+        text={t("help.xsd.specification.text")}
+        code={baseXsd}
+      />
+    </>
+  )}
+
+  {activeSection === "validacion" && (
+    <>
+      <HelpSection
+        title={t("help.validationHelp.dtd.title")}
+        text={t("help.validationHelp.dtd.text")}
+      />
+
+      <HelpSection
+        title={t("help.validationHelp.xsd.title")}
+        text={t("help.validationHelp.xsd.text")}
+      />
+
+      <HelpSection
+        title={t("help.validationHelp.errors.title")}
+        text={t("help.validationHelp.errors.text")}
+      />
+    </>
+  )}
+
+  {activeSection === "html" && (
+    <>
+      <HelpSection
+        title={t("help.htmlHelp.generate.title")}
+        text={t("help.htmlHelp.generate.text")}
+      />
+
+      <HelpSection
+        title={t("help.htmlHelp.w3c.title")}
+        text={t("help.htmlHelp.w3c.text")}
+      />
+
+      <HelpSection
+        title={t("help.htmlHelp.format.title")}
+        text={t("help.htmlHelp.format.text")}
+      />
+    </>
+  )}
+
+  {activeSection === "proceso" && (
+    <>
+      <HelpSection
+        title={t("help.process.what.title")}
+        text={t("help.process.what.text")}
+      />
+
+      <HelpSection
+        title="1. XML"
+        text={t("help.process.xml")}
+      />
+
+      <HelpSection
+        title="2. DTD"
+        text={t("help.process.dtd")}
+      />
+
+      <HelpSection
+        title="3. XSD"
+        text={t("help.process.xsd")}
+      />
+
+      <HelpSection
+        title="4. HTML"
+        text={t("help.process.html")}
+      />
+
+      <HelpSection
+        title="5. W3C"
+        text={t("help.process.w3c")}
+      />
+    </>
+  )}
+</div>
 
         </div>
       </aside>

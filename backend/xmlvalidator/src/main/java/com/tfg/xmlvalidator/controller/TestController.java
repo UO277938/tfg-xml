@@ -59,11 +59,23 @@ public class TestController {
         XsdValidationService xsdValidationService = new XsdValidationService();
         XsltTransformationService xsltService = new XsltTransformationService();
         W3cValidationService w3cValidationService = new W3cValidationService();
+        TranslationService translationService1 = new TranslationService();
         XmlPipelineService pipelineService = new XmlPipelineService(
-                dtdValidationService, xsdValidationService, xsltService, w3cValidationService);
+                dtdValidationService, xsdValidationService, xsltService, w3cValidationService, translationService);
 
         return ResponseEntity.ok(
-                pipelineService.execute(request.getXml())
+                pipelineService.execute(request.getXml(), request.getIdioma())
+        );
+    }
+
+    private final TranslationService translationService = new TranslationService();
+
+    @GetMapping("/test-translation")
+    public String testTranslation() {
+        return translationService.translate(
+                "This is a test",
+                "en",
+                "es"
         );
     }
 

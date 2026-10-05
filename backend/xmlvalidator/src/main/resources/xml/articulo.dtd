@@ -33,13 +33,13 @@
 <!ELEMENT resumen %contenidoTexto;>
 
 <!-- SECCIONES -->
-<!ELEMENT cuerpo (encabezado?, navegacion?, aparte?, principal?, pie?)>
+<!ELEMENT cuerpo ((%contenidoElemento;)* | (encabezado?, navegacion?, aparte?, principal?, pie?))>
 
-<!ELEMENT articulo (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT seccion (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT articulo ((%contenidoElemento;)*)>
+<!ELEMENT seccion ((%contenidoElemento;)*)>
 <!ELEMENT navegacion (enlace | lista)*>
-<!ELEMENT aparte (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT encabezado (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT aparte ((%contenidoElemento;)*)>
+<!ELEMENT encabezado ((%contenidoElemento;)*)>
 <!ELEMENT pie ((%contenidoElemento;)*)>
 <!ELEMENT contenedor ((%contenidoElemento;)*)>
 

@@ -2,9 +2,11 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/api";
 
-export const validate = (xml) =>
-  axios.post(`${API_URL}/pipeline`, { xml })
-       .then(res => res.data);
+export const validate = (xml, idioma = "es") =>
+  axios.post(`${API_URL}/pipeline`, {
+    xml,
+    idioma
+  }).then(res => res.data);
 
 export const validateDtd = (xml) =>
   axios.post(`${API_URL}/validar-dtd`, { xml })

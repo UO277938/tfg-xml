@@ -1,6 +1,10 @@
 import "./Tab.css";
 
+import { useTranslation } from "react-i18next";
+
 export default function Tabs({ activeTab, setActiveTab }) {
+  const { t } = useTranslation();
+
   return (
     <div className="tabs">
       <button
@@ -8,7 +12,7 @@ export default function Tabs({ activeTab, setActiveTab }) {
         className={activeTab === "xml" ? "tab active" : "tab"}
         onClick={() => setActiveTab("xml")}
       >
-        XML
+        {t("tabs.xml")}
       </button>
 
       <button
@@ -16,7 +20,7 @@ export default function Tabs({ activeTab, setActiveTab }) {
         className={activeTab === "html" ? "tab active" : "tab"}
         onClick={() => setActiveTab("html")}
       >
-        HTML
+        {t("tabs.html")}
       </button>
     </div>
   );

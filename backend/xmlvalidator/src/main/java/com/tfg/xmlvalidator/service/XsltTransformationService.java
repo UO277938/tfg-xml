@@ -39,6 +39,15 @@ public class XsltTransformationService {
                     factory.newTransformer(
                             new StreamSource(xsltStream)
                     );
+            transformer.setOutputProperty(
+                    javax.xml.transform.OutputKeys.METHOD,
+                    "html"
+            );
+
+            transformer.setOutputProperty(
+                    javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION,
+                    "yes"
+            );
 
             transformer.setErrorListener(new ErrorListener() {
 
@@ -70,10 +79,17 @@ public class XsltTransformationService {
                     new StreamResult(writer)
             );
 
+            String html = writer.toString();
+
+            html = html.replace(
+                    "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">",
+                    ""
+            );
+
             return new ValidationResult(
                     errors.isEmpty(),
                     errors,
-                    writer.toString()
+                    html
             );
 
         } catch (Exception e) {

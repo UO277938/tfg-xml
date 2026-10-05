@@ -227,6 +227,15 @@ body {
     padding: 8px;
   }
 
+  .header-actions {
+    gap: 5px;
+  }
+
+  .language-button {
+    padding: 0 8px;
+    font-size: 11px;
+  }
+
   .help-panel {
     top: 0;
     right: 0;
@@ -279,6 +288,49 @@ body {
     flex-direction: column;
     gap: 6px;
   }
+}
+
+/* BOTON INTERNACIOLIZACIÓN */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 32px;
+  padding: 0 10px;
+
+  border: 1px solid #3e3e42;
+  border-radius: 6px;
+
+  background: #2d2d30;
+  color: #cccccc;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.language-button:hover {
+  background: #37373d;
+  border-color: #4fc1ff;
+  color: #ffffff;
+}
+
+.language-button:active {
+  background: #414147;
 }
 
 /* BOTON DE AYUDA */

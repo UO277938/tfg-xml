@@ -3,6 +3,11 @@ package com.tfg.xmlvalidator.service;
 import com.tfg.xmlvalidator.model.PipelineResult;
 import com.tfg.xmlvalidator.model.ValidationResult;
 
+import com.tfg.xmlvalidator.model.XmlError;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 public class XmlPipelineService {
 
     private final DtdValidationService dtdValidationService;
@@ -10,19 +15,23 @@ public class XmlPipelineService {
     private final XsltTransformationService xsltTransformationService;
     private final W3cValidationService w3cValidationService;
 
+    private final TranslationService translationService;
+
     public XmlPipelineService(
             DtdValidationService dtdValidationService,
             XsdValidationService xsdValidationService,
             XsltTransformationService xsltTransformationService,
-            W3cValidationService w3cValidationService) {
+            W3cValidationService w3cValidationService,
+            TranslationService translationService) {
 
         this.dtdValidationService = dtdValidationService;
         this.xsdValidationService = xsdValidationService;
         this.xsltTransformationService = xsltTransformationService;
         this.w3cValidationService = w3cValidationService;
+        this.translationService = translationService;
     }
 
-    public PipelineResult execute(String xml) {
+    public PipelineResult execute(String xml, String idioma) {
 
         // 1.Validar XML
         ValidationResult dtdResult = dtdValidationService.validateXML(xml);
@@ -30,7 +39,8 @@ public class XmlPipelineService {
             return new PipelineResult(
                     false,
                     "DTD",
-                    dtdResult.getErrors(),
+                    //dtdResult.getErrors(),
+                    translateErrors(dtdResult.getErrors(), idioma),
                     null
             );
         }
@@ -39,7 +49,7 @@ public class XmlPipelineService {
             return new PipelineResult(
                     false,
                     "XSD",
-                    xsdResult.getErrors(),
+                    translateErrors(xsdResult.getErrors(), idioma),
                     null
             );
         }
@@ -49,7 +59,7 @@ public class XmlPipelineService {
             return new PipelineResult(
                     false,
                     "Transformation XSLT",
-                    transformationResult.getErrors(),
+                    translateErrors(transformationResult.getErrors(), idioma),
                     null
             );
         }
@@ -59,7 +69,8 @@ public class XmlPipelineService {
             return new PipelineResult(
                     false,
                     "W3C",
-                    htmlResult.getErrors(),
+                    //htmlResult.getErrors(),
+                    translateErrors(htmlResult.getErrors(), idioma),
                     transformationResult.getHtml()
             );
         }
@@ -70,5 +81,20 @@ public class XmlPipelineService {
                 null,
                 transformationResult.getHtml()
         );
+    }
+
+    private List<XmlError> translateErrors(List<XmlError> errors, String idioma) {
+
+        return errors.stream()
+                .map(error -> new XmlError(
+                        error.getLine(),
+                        error.getColumn(),
+                        translationService.translate(
+                                error.getMessage(),
+                                "en",
+                                idioma
+                        )
+                ))
+                .toList();
     }
 }

@@ -15,6 +15,10 @@ public class TranslationService {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final String libreTranslateUrl =
+            System.getenv().getOrDefault(
+                    "LIBRETRANSLATE_URL", "http://localhost:5000" );
+
     public String translate(String text, String source, String target) {
         try {
             return translateOutsideQuotes(text, source, target);
@@ -100,7 +104,7 @@ public class TranslationService {
         );
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:5000/translate"))
+                .uri(URI.create(libreTranslateUrl + "/translate"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();

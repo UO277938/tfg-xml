@@ -283,11 +283,6 @@ body {
     padding: 16px;
   }
 
-  .editor-topbar {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 6px;
-  }
 }
 
 /* BOTON INTERNACIOLIZACIÓN */
@@ -566,18 +561,7 @@ body {
   font-size: 10px;
 }
 
-.error-list {
-  display: flex;
 
-  flex-direction: column;
-
-  gap: 6px;
-
-  padding: 0;
-  margin: 0;
-
-  list-style: none;
-}
 
 .error-item {
   padding: 8px 10px;

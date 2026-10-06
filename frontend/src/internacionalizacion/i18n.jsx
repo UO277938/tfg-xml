@@ -6,7 +6,7 @@ import en from "./idiomas/en";
 
 const savedLanguage = localStorage.getItem("language") || "en";
 
-i18n
+await i18n
   .use(initReactI18next)
   .init({
     resources: {

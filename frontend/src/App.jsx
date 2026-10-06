@@ -112,19 +112,13 @@ export default function App() {
 
                 <button
                   type="button"
-                  className={`primary-action ${loading ? "loading" : ""}`}
+                  className="primary-action"
                   onClick={handleValidate}
                   disabled={loading}
                 >
-                  {loading ? (
-                    <>
-                      {t("validation.loading")}
-                    </>
-                  ) : (
-                    <>
-                      ✓ {t("validation.validate")}
-                    </>
-                  )}
+                  {loading
+                    ? t("validation.loading")
+                    : `✓ ${t("validation.validate")}`}
                 </button>
 
               </div>

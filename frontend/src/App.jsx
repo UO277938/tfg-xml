@@ -118,7 +118,6 @@ export default function App() {
                 >
                   {loading ? (
                     <>
-                      <span className="loading" />
                       {t("validation.loading")}
                     </>
                   ) : (

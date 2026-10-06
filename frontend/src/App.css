@@ -447,11 +447,6 @@ body {
   cursor: wait;
   opacity: 0.8;
 }
-/*CARGANDO*/
-.loading {
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #ffffff;
-}
 
 /*RESULTADOS */
 .results-panel {

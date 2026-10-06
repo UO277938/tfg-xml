@@ -16,7 +16,9 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(
-                                "https://tfg-cqg2uz2t0-fer-0fc4.vercel.app"
+                                "https://tfg-cqg2uz2t0-fer-0fc4.vercel.app",
+                                "https://tfg-xml.vercel.app",
+                                "https://xmlvalidator-backend.onrender.com"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*");

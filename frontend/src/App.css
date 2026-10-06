@@ -442,8 +442,7 @@ body {
   background: #1177bb;
 }
 
-.primary-action:disabled,
-.primary-action.loading {
+.primary-action:disabled {
   cursor: wait;
   opacity: 0.8;
 }

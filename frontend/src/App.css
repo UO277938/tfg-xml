@@ -449,15 +449,9 @@ body {
 }
 /*CARGANDO*/
 .loading {
-  width: 14px;
-  height: 14px;
-
   border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: #ffffff;
-
-  border-radius: 50%;
 }
-
 
 /*RESULTADOS */
 .results-panel {

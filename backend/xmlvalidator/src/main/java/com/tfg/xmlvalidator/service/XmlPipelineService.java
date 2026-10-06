@@ -7,6 +7,7 @@ import com.tfg.xmlvalidator.model.XmlError;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 public class XmlPipelineService {
 
@@ -84,17 +85,20 @@ public class XmlPipelineService {
     }
 
     private List<XmlError> translateErrors(List<XmlError> errors, String idioma) {
-
-        return errors.stream()
-                .map(error -> new XmlError(
-                        error.getLine(),
-                        error.getColumn(),
-                        translationService.translate(
-                                error.getMessage(),
-                                "en",
-                                idioma
-                        )
-                ))
-                .toList();
+        if(Objects.equals(idioma, "en"))
+            return errors;
+        else{
+            return errors.stream()
+                    .map(error -> new XmlError(
+                            error.getLine(),
+                            error.getColumn(),
+                            translationService.translate(
+                                    error.getMessage(),
+                                    "en",
+                                    idioma
+                            )
+                    ))
+                    .toList();
+        }
     }
 }

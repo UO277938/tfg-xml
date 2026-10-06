@@ -19,6 +19,7 @@ const en = {
 
     validation: {
       validate: "Validate document",
+      loading: "Validating...",
       result: "PIPELINE RESULT",
       valid: "Valid document",
       invalid: "Invalid document",
@@ -143,22 +144,7 @@ const en = {
   help: "Help"
 },
 
-validation: {
-  validate: "Validate document",
-  loading: "Validating...",
-  result: "PIPELINE RESULT",
-  valid: "Valid document",
-  invalid: "Invalid document",
-  errors: "Errors found",
-  line: "Line",
-  column: "Column",
-  noDetails:
-    "The pipeline has finished indicating that the document is invalid, but no error details were received.",
-  success:
-    "The document has successfully passed all pipeline stages.",
-  pipelineError:
-    "The pipeline could not be executed."
-}
+
 };
 
 export default en;

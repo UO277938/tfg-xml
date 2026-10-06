@@ -19,6 +19,7 @@ const es = {
 
     validation: {
       validate: "Validar documento",
+      loading: "Validando...",
       result: "RESULTADO DEL PIPELINE",
       valid: "Documento válido",
       invalid: "Documento no válido",
@@ -143,22 +144,6 @@ const es = {
         help: "Ayuda"
     },
 
-    validation: {
-        validate: "Validar documento",
-        loading: "Validando...",
-        result: "RESULTADO DEL PIPELINE",
-        valid: "Documento válido",
-        invalid: "Documento no válido",
-        errors: "Errores encontrados",
-        line: "Línea",
-        column: "Columna",
-        noDetails:
-            "El pipeline ha terminado indicando que el documento no es válido, pero no se han recibido detalles de los errores.",
-        success:
-            "El documento ha superado correctamente todas las fases del pipeline.",
-        pipelineError:
-            "No se ha podido ejecutar el pipeline."
-    }
 };
 
 export default es;

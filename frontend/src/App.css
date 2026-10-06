@@ -456,15 +456,8 @@ body {
   border-top-color: #ffffff;
 
   border-radius: 50%;
-
-  animation: loading-spin 0.7s linear infinite;
 }
 
-@keyframes loading-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
 /*RESULTADOS */
 .results-panel {

@@ -413,13 +413,16 @@ body {
   padding: 2px 0;
 }
 
+/*BOTON VALIDAR*/
 .primary-action {
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
+  gap: 8px;
 
-  min-width: 170px;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
 
   padding: 9px 14px;
 
@@ -439,9 +442,28 @@ body {
   background: #1177bb;
 }
 
-.primary-action:disabled {
-  opacity: 0.6;
+.primary-action:disabled,
+.primary-action.loading {
   cursor: wait;
+  opacity: 0.8;
+}
+/*CARGANDO*/
+.loading {
+  width: 14px;
+  height: 14px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: loading-spin 0.7s linear infinite;
+}
+
+@keyframes loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /*RESULTADOS */

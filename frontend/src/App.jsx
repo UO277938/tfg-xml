@@ -16,6 +16,8 @@ export default function App() {
   const { t, i18n } = useTranslation();
   const [showHelp, setShowHelp] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const [xml, setXml] = useState(baseXml);
 
   const [errors, setErrors] = useState([]);
@@ -26,12 +28,14 @@ export default function App() {
   const [html, setHtml] = useState(baseHtml);
 
   const handleValidate = async () => {
-    if (activeTab !== "xml") return;
+    if (activeTab !== "xml" || loading) return;
+
+    setLoading(true);
 
     try {
       const res = await validate(xml, i18n.language);
 
-      console.log("Resultado pipeline:", res);
+      //console.log("Resultado pipeline:", res);
 
       setErrors(Array.isArray(res.errores) ? res.errores : []);
       setValid(res.success);
@@ -53,6 +57,9 @@ export default function App() {
 
       setValid(false);
       setFase("ERROR");
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,9 +112,20 @@ export default function App() {
 
                 <button
                   type="button"
-                  className="primary-action"
+                  className={`primary-action ${loading ? "loading" : ""}`}
                   onClick={handleValidate}
-                >✓ {t("validation.validate")}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="loading" />
+                      {t("validation.loading")}
+                    </>
+                  ) : (
+                    <>
+                      ✓ {t("validation.validate")}
+                    </>
+                  )}
                 </button>
 
               </div>
@@ -184,7 +202,6 @@ export default function App() {
               >
 
                 <header className="results-header">
-
                   <div>
                     <span className="results-label">
                       {t("validation.result")}

@@ -145,6 +145,7 @@ const en = {
 
 validation: {
   validate: "Validate document",
+  loading: "Validating...",
   result: "PIPELINE RESULT",
   valid: "Valid document",
   invalid: "Invalid document",

@@ -157,8 +157,9 @@ export default function HelpPanel({ onClose }) {
         code={[
           "<articulo>",
           "  <metadatos>",
-          "    <titulo>Título</titulo>",
+          "    <tituloHTML>Título</tituloHTML>",
           "    <autor>Autor</autor>",
+          "    <fecha>yyyy/mm/dd</fecha>",
           "  </metadatos>",
           "  <contenido>",
           "    ...",

@@ -33,13 +33,13 @@ export const baseDtd = `<!-- REUTILIZABLE -->
 <!ELEMENT resumen %contenidoTexto;>
 
 <!-- SECCIONES -->
-<!ELEMENT cuerpo (encabezado?, navegacion?, aparte?, principal?, pie?)>
+<!ELEMENT cuerpo ((%contenidoElemento;)* | (encabezado?, navegacion?, aparte?, principal?, pie?))>
 
-<!ELEMENT articulo (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT seccion (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT articulo ((%contenidoElemento;)*)>
+<!ELEMENT seccion ((%contenidoElemento;)*)>
 <!ELEMENT navegacion (enlace | lista)*>
-<!ELEMENT aparte (titulo?, (%contenidoElemento;)*)>
-<!ELEMENT encabezado (titulo?, (%contenidoElemento;)*)>
+<!ELEMENT aparte ((%contenidoElemento;)*)>
+<!ELEMENT encabezado ((%contenidoElemento;)*)>
 <!ELEMENT pie ((%contenidoElemento;)*)>
 <!ELEMENT contenedor ((%contenidoElemento;)*)>
 
@@ -182,6 +182,7 @@ export const baseDtd = `<!-- REUTILIZABLE -->
 <!ELEMENT dialogo ((%contenidoElemento;)*)>`;
 
 export const  baseXsd = `<?xml version="1.0" encoding="UTF-8"?>
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <!-- REUTILIZABLE -->
         <xs:group name="contenidoElemento">

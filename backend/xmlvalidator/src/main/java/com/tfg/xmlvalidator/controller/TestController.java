@@ -37,14 +37,12 @@ public class TestController {
 
     @PostMapping("/validar-w3c")
     public ResponseEntity<ValidationResult> validarHTMLW3C(@RequestBody XmlRequest request) {
-        System.out.println("ENTRA EN W3C");
         XsltTransformationService xsltService = new XsltTransformationService();
         ValidationResult html = xsltService.transformXML(request.getXml());
         if(html.isValid()) {
             W3cValidationService validator = new W3cValidationService();
 
             ValidationResult result = validator.validateHTML(html.getHtml());
-            System.out.println("SALE DE W3C");
 
             return ResponseEntity.ok(result);
         }

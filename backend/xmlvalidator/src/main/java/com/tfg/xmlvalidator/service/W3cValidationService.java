@@ -40,9 +40,6 @@ public class W3cValidationService {
 
             String body = response.getBody();
 
-            System.out.println("=== W3C RAW RESPONSE ===");
-            System.out.println(body);
-
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(body);
 
@@ -52,7 +49,6 @@ public class W3cValidationService {
 
             if (messages.isArray()) {
                 for (JsonNode msg : messages) {
-                    System.out.println("ENTRA");
                     String type = msg.path("type").asText("");
 
                     if ("error".equals(type) || "info".equals(type)) {

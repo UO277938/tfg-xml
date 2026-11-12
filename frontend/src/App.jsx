@@ -35,15 +35,21 @@ export default function App() {
     try {
       const res = await validate(xml, i18n.language);
 
-      //console.log("Resultado pipeline:", res);
-
       setErrors(Array.isArray(res.errores) ? res.errores : []);
       setValid(res.success);
       setFase(res.fase ?? "");
 
       if (res.html) {
-        setHtml(res.html);
+        const formatted = await prettier.format(res.html, {
+          parser: "html",
+          plugins: [parserHtml]
+        });
+
+
+        setActiveTab("html")
+        setHtml(formatted);
       }
+      
     } catch (e) {
       console.error("Error ejecutando el pipeline:", e);
 
@@ -75,12 +81,11 @@ export default function App() {
 
     else if (activeTab === "html") {
 
-    const formatted = await prettier.format(html, {
-      parser: "html",
-      plugins: [parserHtml]
-    });
-
-    setHtml(formatted);
+      const formatted = await prettier.format(html, {
+        parser: "html",
+        plugins: [parserHtml]
+      });
+      setHtml(formatted);
   }
 
   };
